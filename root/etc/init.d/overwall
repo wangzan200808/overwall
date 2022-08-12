@@ -44,7 +44,7 @@ switch_server=$1
 server_count=0
 
 uci_get_by_name(){
-	ret=$(uci -q get $NAME.$1.$2)
+	ret=$(uci -q get $NAME.$1.$2 2>/dev/null)
 	echo ${ret:=$3}
 }
 
