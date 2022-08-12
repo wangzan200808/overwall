@@ -9,7 +9,7 @@ DIR=/usr/share/overwall
 TMP=/tmp/overwall
 
 log(){
-	[ $A = N ] && echo "$(date +'%Y-%m-%d %H:%M:%S') $*" >> /tmp/overwall.log
+	echo "$(date +'%Y-%m-%d %H:%M:%S') $*" >> /tmp/overwall.log
 }
 
 if [ $A = Y ];then
