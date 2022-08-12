@@ -49,7 +49,7 @@ uci_get_by_name(){
 }
 
 uci_get_by_type(){
-	ret=$(uci -q get $NAME.@$1[0].$2)
+	ret=$(uci -q get $NAME.@$1[0].$2 2>/dev/null)
 	echo ${ret:=$3}
 }
 
