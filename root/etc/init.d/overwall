@@ -49,7 +49,7 @@ uci_get_by_name(){
 }
 
 uci_get_by_type(){
-	ret=$(uci get overwall.@$1[0].$2 )
+	ret=$(uci -q get overwall.@$1[0].$2 )
 	echo ${ret:=$3}
 }
 
