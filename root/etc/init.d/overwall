@@ -4,7 +4,7 @@ STOP=15
 SERVICE_DAEMONIZE=1
 NAME=overwall
 VAR=/var/etc/overwall
-FWI=$(uci -q get firewall.$NAME.path) || FWI=$VAR.include
+FWI=$(uci -q get firewall.$NAME.path 2>/dev/null) || FWI=$VAR.include
 CONFIG_FILE=$VAR-tcp
 CONFIG_UDP_FILE=$VAR-udp.json
 CONFIG_YB_FILE=$VAR-yb
