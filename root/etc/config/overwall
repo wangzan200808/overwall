@@ -10,6 +10,7 @@ config global
 	option switch_time '600'
 	option switch_timeout '5'
 	option switch_try_count '3'
+	option global_server 'cfg064a8f'
 
 config socks5_proxy
 
