@@ -107,6 +107,10 @@ define Package/$(PKG_NAME)/conffiles
 /etc/overwall/
 endef
 
+define Package/overwall/install
+        $(INSTALL_DIR) $(1)/etc/init.d
+	$(INSTALL_BIN) ./files/aria2.init $(1)/etc/init.d/overwall
+
 include $(TOPDIR)/feeds/luci/luci.mk
 
 # call BuildPackage - OpenWrt buildroot signature
