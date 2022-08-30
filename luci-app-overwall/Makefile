@@ -108,11 +108,11 @@ define Package/$(PKG_NAME)/conffiles
 endef
 
 define Package/overwall/install
-	$(INSTALL_DIR) $(1)/etc/init.d/overwall
-	$(INSTALL_BIN) ./files/overwall.init $(1)/etc/init.d/overwall
+	$(INSTALL_DIR) $(1)/etc/init.d/
+	$(INSTALL_BIN) ./root/etc/init.d/overwall $(1)/etc/init.d/overwall
 	
 	$(INSTALL_DIR) $(1)/usr/share/overwall
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/overwall/* $(1)/usr/share/overwall/
+	$(INSTALL_BIN) /overwall/* $(1)/usr/share/overwall/
 endef
 
 include $(TOPDIR)/feeds/luci/luci.mk
