@@ -10,11 +10,11 @@ function index()
 end
 
 local function is_1()
-	return luci.sys.call("[ `cat /sys/module/xt_FLOWOFFLOAD/refcnt 2>/dev/null` -gt 0 || `cat /sys/module/nft_flow_offload/refcnt 2>/dev/null` -gt 0 ] 2>/dev/null")==0
+	return luci.sys.call("[ `cat /sys/module/nft_flow_offload/refcnt 2>/dev/null` -gt 0 ] 2>/dev/null")==0
 end
 
 local function is_2()
-	return luci.sys.call(" `cat /sys/module/xt_FULLCONENAT/refcnt 2>/dev/null` | grep FULLCONENAT || `cat /sys/module/nft_fullcone/refcnt 2>/dev/null` | grep FULLCONENAT>/dev/null")==0
+	return luci.sys.call("nft list ruleset | grep fullcone >/dev/null")==0
 end
 
 local function is_3()
