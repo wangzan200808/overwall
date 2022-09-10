@@ -14,7 +14,7 @@ local function is_1()
 end
 
 local function is_2()
-	return luci.sys.call("iptables -t nat -L -n --line-numbers | grep FULLCONENAT ||"nftables -t nat -L -n --line-numbers | grep FULLCONENAT>/dev/null")==0
+	return luci.sys.call(" `cat /sys/module/xt_FULLCONENAT/refcnt 2>/dev/null` | grep FULLCONENAT || `cat /sys/module/nft_fullcone/refcnt 2>/dev/null` | grep FULLCONENAT>/dev/null")==0
 end
 
 local function is_3()
