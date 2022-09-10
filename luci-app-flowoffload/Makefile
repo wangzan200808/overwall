@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-flowoffload
-PKG_VERSION:=1.1
+PKG_VERSION:=1.2
 PKG_RELEASE:=2
 
 include $(INCLUDE_DIR)/package.mk
@@ -11,7 +11,7 @@ define Package/$(PKG_NAME)
   CATEGORY:=LuCI
   SUBMENU:=3. Applications
   TITLE:=LuCI support for Flow Offload
-  DEPENDS:=+kmod-ipt-offload +kmod-tcp-bbr +luci-compat
+  DEPENDS:=+kmod-ipt-offload +kmod-tcp-bbr +luci-compat+kmod-nft-offload
   PKGARCH:=all
 endef
 
