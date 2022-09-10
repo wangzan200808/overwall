@@ -11,7 +11,7 @@ define Package/$(PKG_NAME)
   CATEGORY:=LuCI
   SUBMENU:=3. Applications
   TITLE:=LuCI support for Flow Offload
-  DEPENDS:=+kmod-ipt-offload +kmod-tcp-bbr +luci-compat+kmod-nft-offload
+  DEPENDS:=+kmod-ipt-offload +kmod-tcp-bbr +kmod-nft-offload
   PKGARCH:=all
 endef
 
