@@ -1,8 +1,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-overwall
-PKG_VERSION:=1.3.1
-PKG_RELEASE:=20220829
+PKG_VERSION:=1.3.2
+PKG_RELEASE:=20220916
 
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Libev_Server \
@@ -107,7 +107,7 @@ define Package/$(PKG_NAME)/conffiles
 /etc/overwall/
 endef
 
-define Package/overwall/install
+define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/etc/init.d/
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/etc/init.d/overwall $(1)/etc/init.d/overwall
 	
