@@ -89,12 +89,7 @@ local securitys={
 }
 
 local flows={
-"xtls-rprx-splice",
-"xtls-rprx-splice-udp443",
-"xtls-rprx-direct",
-"xtls-rprx-direct-udp443",
-"xtls-rprx-origin",
-"xtls-rprx-origin-udp443"
+"xtls-rprx-vision"
 }
 
 m=Map(ov,translate("Edit Overwall Server"))
