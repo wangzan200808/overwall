@@ -89,7 +89,8 @@ local securitys={
 }
 
 local flows={
-"xtls-rprx-vision"
+"xtls-rprx-vision",
+"xtls-rprx-vision-udp443"
 }
 
 m=Map(ov,translate("Edit Overwall Server"))
@@ -125,6 +126,12 @@ end
 if luci.sys.call("which naive >/dev/null")==0 then
 o:value("naiveproxy",translate("NaiveProxy"))
 end
+if luci.sys.call("which hysteria >/dev/null")==0 then
+o:value("hysteria",translate("Hysteria"))
+end
+if luci.sys.call("which tuic-client >/dev/null")==0 then
+o:value("tuic-client",translate("TUIC"))
+end
 if luci.sys.call("which redsocks2 >/dev/null")==0 then
 o:value("socks5",translate("Socks5"))
 o:value("tun",translate("Network Tunnel"))
@@ -147,6 +154,8 @@ o:depends("type","vmess")
 o:depends("type","vless")
 o:depends("type","trojan")
 o:depends("type","naiveproxy")
+o:depends("type","Hysteria")
+o:depends("type","TUIC")
 o:depends("type","socks5")
 
 o=s:option(Value,"server_port",translate("Server Port"))
@@ -158,6 +167,8 @@ o:depends("type","vmess")
 o:depends("type","vless")
 o:depends("type","trojan")
 o:depends("type","naiveproxy")
+o:depends("type","Hysteria")
+o:depends("type","TUIC")
 o:depends("type","socks5")
 
 o=s:option(Flag,"auth_enable",translate("Enable Authentication"))
@@ -352,7 +363,7 @@ o:depends("xtls",1)
 
 o=s:option(ListValue,"vless_flow",translate("Flow"))
 for _,v in ipairs(flows) do o:value(v,v) end
-o.default="xtls-rprx-splice"
+o.default="xtls-rprx-vision"
 o:depends("xtls",1)
 
 o=s:option(Flag,"mux",translate("Mux"))
