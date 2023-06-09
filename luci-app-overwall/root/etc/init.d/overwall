@@ -887,8 +887,8 @@ cache-persist no
 cache-size 0
 log-level fatal
 log-file $LOG
-bind :5335 -group a
-bind :5336 -group i -no-rule-soa
+bind [::]:5335 -group a
+bind [::]:5336 -group i -no-rule-soa
 EOF
 	if [ $dns_mode = 0 ];then
 		echo $doh | sed 's/,/\n/g' | sed -e 's/^/server-https /g' -e 's/$/ -group a -exclude-default-group/g' >> $DNS_T
