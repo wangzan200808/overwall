@@ -1294,9 +1294,9 @@ cache-persist no
 cache-size 0
 log-level fatal
 log-file $LOG
-bind :5335
-bind :5336
-bind :5337
+bind [::]:5335
+bind [::]:5336
+bind [::]:5337
 $([ $dns_mode_l = 0 ] && echo 223.5.5.5 223.6.6.6 | sed 's/ /\n/g' | sed 's/^/server /g' || echo $REF | sed 's/ /\n/g' | sed 's/^/server /g')
 EOF
 		$(which smartdns) -c $DNS_T
