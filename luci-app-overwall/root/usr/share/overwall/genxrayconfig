@@ -22,7 +22,7 @@ inbound=(local_port~="0") and {
 	},
 	sniffing={
 		enabled=true,
-		destOverride={"http","tls"}
+		destOverride={"http","tls","quic"}
 	}
 } or nil,
 inboundDetour=(proto=="tcp" and socks_port~="0") and {
@@ -48,7 +48,7 @@ outbound={
 						alterId=(server.type=="vmess") and tonumber(server.alter_id or 0) or nil,
 						security=(server.type=="vmess") and server.security or nil,
 						encryption=(server.type=="vless") and server.vless_encryption or nil,
-						flow=(server.xtls=='1') and (server.vless_flow and server.vless_flow or "xtls-rprx-splice") or nil
+						flow=(server.reality=='1') and (server.vless_flow and server.vless_flow or "xtls-rprx-vision") or nil
 					}
 				}
 			}
@@ -56,12 +56,12 @@ outbound={
 	},
 	streamSettings={
 		network=server.transport,
-		security=(server.xtls=='1') and "xtls" or (server.tls=='1') and "tls" or "none",
+		security=(server.reality=='1') and "reality" or (server.tls=='1') and "tls" or "none",
 		tlsSettings=(server.tls=='1') and {
 			allowInsecure=(server.insecure=="1") and true or nil,
 			serverName=tls_host
 		} or nil,
-		xtlsSettings=(server.xtls=='1') and {
+		realitySettings=(server.reality=='1') and {
 			allowInsecure=(server.insecure=="1") and true or nil,
 			serverName=tls_host
 		} or nil,
