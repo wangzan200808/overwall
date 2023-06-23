@@ -232,9 +232,9 @@ function buildUrl(btn,urlname,sid){
 		}
 		params+="&type="+v_transport;
 		params+=opt.query("encryption","vless_encryption");
-		if (opt.get("tls").checked || opt.get("xtls").checked){
-			if (opt.get("xtls").checked){
-				v_security="xtls";
+		if (opt.get("tls").checked || opt.get("reality").checked){
+			if (opt.get("reality").checked){
+				v_security="reality";
 				var v_flow=opt.get("vless_flow").value;
 				params+="&flow="+v_flow;
 			}else{
@@ -578,11 +578,11 @@ function fromUrl(btn,urlname,sid){
 			}
 		}
 		opt.set('vless_encryption',queryParam.encryption || "none");
-		opt.set('xtls',0);
+		opt.set('reality',0);
 		opt.set('tls',0);
-		if (queryParam.security=="tls" || queryParam.security=="xtls"){
-			if (queryParam.security=="xtls"){
-				opt.set('xtls',1);
+		if (queryParam.security=="tls" || queryParam.security=="reality"){
+			if (queryParam.security=="reality"){
+				opt.set('reality',1);
 				opt.set('vless_flow',queryParam.flow || "xtls-rprx-splice");
 			}else{
 				opt.set('tls',1);
