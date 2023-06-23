@@ -80,7 +80,7 @@ function refresh()
 	local icount=0
 	local r
 	if set=="0" then
-		sret=CALL("curl -Lfso /tmp/gfw.b64 https://fastly.jsdelivr.net/gh/wangzan200808/wp-uploads@main/GFW_List")
+		sret=CALL("curl -Lfso /tmp/gfw.b64 https://cdn.jsdelivr.net/gh/wangzan200808/wp-uploads@master/GFW_List")
 		if sret==0 then
 			CALL("/usr/share/overwall/gfw")
 			icount=EXEC("cat /tmp/gfwnew.txt | wc -l")
@@ -100,7 +100,7 @@ function refresh()
 			r="-1"
 		end
 	elseif set=="1" then
-		sret=CALL("A=`curl -Lfsm 9 https://fastly.jsdelivr.net/gh/wangzan200808/wp-update@main/China_IPList || curl -Lfsm 9 https://fastly.jsdelivr.net/gh/wangzan200808/wp-update@main/China_IPList` && echo \"$A\" | base64 -d > /tmp/china.txt")
+		sret=CALL("A=`curl -Lfsm 9 https://cdn.jsdelivr.net/gh/wangzan200808/wp-update@master/China_IPList || curl -Lfsm 9 https://cdn.jsdelivr.net/gh/wangzan200808/wp-update@master/China_IPList` && echo \"$A\" | base64 -d > /tmp/china.txt")
 		icount=EXEC("cat /tmp/china.txt | wc -l")
 		if sret==0 and tonumber(icount)>1000 then
 			oldcount=EXEC("cat /tmp/overwall/china.txt | wc -l")
@@ -115,7 +115,7 @@ function refresh()
 		end
 		EXEC("rm -f /tmp/china.txt ")
 	elseif set=="2" then
-		sret=CALL("A=`curl -Lfsm 9 https://fastly.jsdelivr.net/gh/wangzan200808/wp-uploads@main/China_IPv6List || curl -Lfsm 9 https://fastly.jsdelivr.net/gh/wangzan200808/wp-uploads@main/China_IPv6List` && echo \"$A\" | base64 -d > /tmp/china_v6.txt")
+		sret=CALL("A=`curl -Lfsm 9 https://cdn.jsdelivr.net/gh/wangzan200808/wp-uploads@master/China_IPv6List || curl -Lfsm 9 https://cdn.jsdelivr.net/gh/wangzan200808/wp-uploads@master/China_IPv6List` && echo \"$A\" | base64 -d > /tmp/china_v6.txt")
 		icount=EXEC("cat /tmp/china_v6.txt | wc -l")
 		if sret==0 and tonumber(icount)>1000 then
 			oldcount=EXEC("cat /tmp/overwall/china_v6.txt | wc -l")
