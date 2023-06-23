@@ -384,6 +384,21 @@ for _,v in ipairs(alpn) do o:value(v,v) end
 o.default="h3,h2,http/1.1"
 o:depends("tls",1)
 
+o=s:option(Value, "fingerprint", translate("Finger Print"))
+o:value("", translate("disable"))
+o:value("chrome", translate("chrome"))
+o:value("firefox", translate("firefox"))
+o:value("safari", translate("safari"))
+o:value("ios", translate("ios"))
+o:value("android", translate("android"))
+o:value("edge", translate("edge"))
+o:value("360", translate("360"))
+o:value("qq", translate("qq"))
+o:value("random", translate("random"))
+o:value("randomized", translate("randomized"))
+o:depends({type = "vless", tls = 1})
+o:depends({type = "vless", reality = 1})
+
 o=s:option(ListValue,"vless_flow",translate("Flow"))
 for _,v in ipairs(flows) do o:value(v,v) end
 o.default="xtls-rprx-vision"
