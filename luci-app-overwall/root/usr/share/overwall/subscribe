@@ -162,11 +162,11 @@ local function parseNodeUrl(A,B)
 	else
 		result.vless_encryption=params.encryption or "none"
 	end
-	if params.security=="tls" or params.security=="xtls" then
+	if params.security=="tls" or params.security=="reality" then
 		if params.security=="tls" then
 			result.tls="1"
 		else
-			result.xtls="1"
+			result.reality="1"
 			result.vless_flow=params.flow or "xtls-rprx-direct"
 		end
 		result.tls_host=params.sni and params.sni
