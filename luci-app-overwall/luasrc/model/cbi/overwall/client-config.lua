@@ -93,6 +93,15 @@ local flows={
 "xtls-rprx-vision-udp443"
 }
 
+local alpn={
+"h3,h2,http/1.1",
+"h3,h2",
+"h3",
+"h2,http/1.1",
+"h2",
+"http/1.1"
+}
+
 m=Map(ov,translate("Edit Overwall Server"))
 m.redirect=luci.dispatcher.build_url("admin/services/overwall/servers")
 if m.uci:get(ov,sid)~="servers" then
@@ -354,21 +363,35 @@ o:depends("type","vmess")
 o:depends("type","vless")
 o:depends("type","trojan")
 
-o=s:option(Flag,"xtls",translate("XTLS"))
+o=s:option(Flag,"reality",translate("REALITY"))
 o:depends("type","vless")
+o:depends("type","vmess")
+
+o=s:option(Value,"reality_publickey",translate("Public key"))
+o:depends("reality",1)
+
+o=s:option(Value,"reality_shortid",translate("Short ID"))
+o:depends("reality",1)
+
+o=s:option(Value,"reality_spiderx",translate("spiderX"))
+o:depends("reality",1)
 
 o=s:option(Value,"tls_host",translate("TLS Host"))
 o:depends("tls",1)
-o:depends("xtls",1)
+
+o=s:option(ListValue,"alpn",translate("ALPN"))
+for _,v in ipairs(alpn) do o:value(v,v) end
+o.default="h3,h2,http/1.1"
+o:depends("tls",1)
 
 o=s:option(ListValue,"vless_flow",translate("Flow"))
 for _,v in ipairs(flows) do o:value(v,v) end
 o.default="xtls-rprx-vision"
-o:depends("xtls",1)
+o:depends("reality",1)
 
 o=s:option(Flag,"mux",translate("Mux"))
 o:depends("type","vmess")
-o:depends({type="vless",xtls=0})
+o:depends({type="vless",reality=0})
 
 o=s:option(Value,"concurrency",translate("Concurrency"))
 o.datatype="uinteger"
