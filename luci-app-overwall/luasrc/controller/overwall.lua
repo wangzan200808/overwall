@@ -100,7 +100,7 @@ function refresh()
 			r="-1"
 		end
 	elseif set=="1" then
-		sret=CALL("A=`curl -Lfsm 9 https://cdn.jsdelivr.net/gh/wangzan200808/wp-update@master/China_IPList || curl -Lfsm 9 https://cdn.jsdelivr.net/gh/wangzan200808/wp-update@master/China_IPList` && echo \"$A\" | base64 -d > /tmp/china.txt")
+		sret=CALL("A=`curl -Lfsm 9 https://cdn.jsdelivr.net/gh/wangzan200808/wp-uploads@master/China_IPList || curl -Lfsm 9 https://cdn.jsdelivr.net/gh/wangzan200808/wp-uploads@master/China_IPList` && echo \"$A\" | base64 -d > /tmp/china.txt")
 		icount=EXEC("cat /tmp/china.txt | wc -l")
 		if sret==0 and tonumber(icount)>1000 then
 			oldcount=EXEC("cat /tmp/overwall/china.txt | wc -l")
