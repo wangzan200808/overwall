@@ -14,11 +14,11 @@ log(){
 
 if [ $A = Y ];then
 	mkdir -p $TMP
-	while ! B=$(curl -Lfsm 9 https://cdn.jsdelivr.net/gh/wangzan200808/wp-update@master/China_IPList);do
+	while ! B=$(curl -Lfsm 9 https://cdn.jsdelivr.net/gh/wangzan200808/wp-uploads@master/China_IPList);do
 		sleep 2
 	done
 else
-	B=$(curl -Lfsm 9 https://cdn.jsdelivr.net/gh/wangzan200808/wp-update@master/China_IPList || curl -Lfsm 9 https://cdn.jsdelivr.net/gh/wangzan200808/wp-update@master/China_IPList)
+	B=$(curl -Lfsm 9 https://cdn.jsdelivr.net/gh/wangzan200808/wp-uploads@master/China_IPList || curl -Lfsm 9 https://cdn.jsdelivr.net/gh/wangzan200808/wp-uploads@master/China_IPList)
 fi
 [ -n "$B" ] && echo "$B" | base64 -d > /tmp/china.txt
 
