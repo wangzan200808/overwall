@@ -481,61 +481,61 @@ return view.extend({
 		so.value('udp', _('UDP'));
 		so.value('', _('Both'));
 
-		so = ss.taboption('field_other', form.DynamicList, 'domain', _('Domain name'),
+		so = ss.taboption('field_host', form.DynamicList, 'domain', _('Domain name'),
 			_('Match full domain.'));
 		so.datatype = 'hostname';
 		so.modalonly = true;
 
-		so = ss.taboption('field_other', form.DynamicList, 'domain_suffix', _('Domain suffix'),
+		so = ss.taboption('field_host', form.DynamicList, 'domain_suffix', _('Domain suffix'),
 			_('Match domain suffix.'));
 		so.modalonly = true;
 
-		so = ss.taboption('field_other', form.DynamicList, 'domain_keyword', _('Domain keyword'),
+		so = ss.taboption('field_host', form.DynamicList, 'domain_keyword', _('Domain keyword'),
 			_('Match domain using keyword.'));
 		so.modalonly = true;
 
-		so = ss..taboption('field_other', form.DynamicList, 'domain_regex', _('Domain regex'),
+		so = ss.taboption('field_host', form.DynamicList, 'domain_regex', _('Domain regex'),
 			_('Match domain using regular expression.'));
 		so.modalonly = true;
 
-		so = ss.taboption('field_other', form.DynamicList, 'source_ip_cidr', _('Source IP CIDR'),
+		so = ss.taboption('field_source_ip', form.DynamicList, 'source_ip_cidr', _('Source IP CIDR'),
 			_('Match source IP CIDR.'));
 		so.datatype = 'or(cidr, ipaddr)';
 		so.modalonly = true;
 
-		so = ss.taboption('field_other', form.Flag, 'source_ip_is_private', _('Private source IP'),
+		so = ss.taboption('field_source_ip', form.Flag, 'source_ip_is_private', _('Private source IP'),
 			_('Match private source IP.'));
 		so.default = so.disabled;
 		so.rmempty = false;
 		so.modalonly = true;
 
-		so = ss.taboption('field_other', form.DynamicList, 'ip_cidr', _('IP CIDR'),
+		so = ss.taboption('field_host', form.DynamicList, 'ip_cidr', _('IP CIDR'),
 			_('Match IP CIDR.'));
 		so.datatype = 'or(cidr, ipaddr)';
 		so.modalonly = true;
 
-		so = ss.taboption('field_other', form.Flag, 'ip_is_private', _('Private IP'),
+		so = ss.taboption('field_host', form.Flag, 'ip_is_private', _('Private IP'),
 			_('Match private IP.'));
 		so.default = so.disabled;
 		so.rmempty = false;
 		so.modalonly = true;
 
-		so = ss.taboption('field_other', form.DynamicList, 'source_port', _('Source port'),
+		so = ss.taboption('field_source_port', form.DynamicList, 'source_port', _('Source port'),
 			_('Match source port.'));
 		so.datatype = 'port';
 		so.modalonly = true;
 
-		so = ss.taboption('field_other', form.DynamicList, 'source_port_range', _('Source port range'),
+		so = ss.taboption('field_source_port', form.DynamicList, 'source_port_range', _('Source port range'),
 			_('Match source port range. Format as START:/:END/START:END.'));
 		so.validate = validatePortRange;
 		so.modalonly = true;
 
-		so = ss.taboption('field_other', form.DynamicList, 'port', _('Port'),
+		so = ss.taboption('field_port', form.DynamicList, 'port', _('Port'),
 			_('Match port.'));
 		so.datatype = 'port';
 		so.modalonly = true;
 
-		so = ss.taboption('field_other', form.DynamicList, 'port_range', _('Port range'),
+		so = ss.taboption('field_port', form.DynamicList, 'port_range', _('Port range'),
 			_('Match port range. Format as START:/:END/START:END.'));
 		so.validate = validatePortRange;
 		so.modalonly = true;
@@ -576,7 +576,7 @@ return view.extend({
 		so.value('global', 'Global');
 		so.value('script', 'Script');
 
-		so = taboption('field_other', form.Flag, 'rule_set_ipcidr_match_source', _('Match source IP via rule set'),
+		so = ss.taboption('field_other', form.Flag, 'rule_set_ipcidr_match_source', _('Match source IP via rule set'),
 			_('Make IP CIDR in rule set used to match the source IP.'));
 		so.default = so.disabled;
 		so.rmempty = false;
