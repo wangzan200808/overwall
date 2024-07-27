@@ -494,7 +494,7 @@ return view.extend({
 			_('Match domain using keyword.'));
 		so.modalonly = true;
 
-		so = ss.option(form.DynamicList, 'domain_regex', _('Domain regex'),
+		so = ss..taboption('field_other', form.DynamicList, 'domain_regex', _('Domain regex'),
 			_('Match domain using regular expression.'));
 		so.modalonly = true;
 
@@ -544,7 +544,7 @@ return view.extend({
 			_('Match process name.'));
 		so.modalonly = true;
 
-		so = ss.option(form.DynamicList, 'process_path', _('Process path'),
+		so = ss.taboption('field_other', form.DynamicList, 'process_path', _('Process path'),
 			_('Match process path.'));
 		so.modalonly = true;
 
