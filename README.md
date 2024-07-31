@@ -1,1 +1,3 @@
-overwall自用版，请勿fork
+overwall已弃用
+现在改用homeproxy，基于sing-box的openwrt客户端
+本版本homeproxy可以使用clash面板
