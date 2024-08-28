@@ -436,10 +436,10 @@ function renderNodeSettings(section, data, features, main_node, routing_mode) {
 	o.depends('type', 'ssh');
 	o.depends('type', 'trojan');
 	o.depends('type', 'tuic');
-		o.depends({'type': 'shadowtls', 'shadowtls_version': '2'});
-		o.depends({'type': 'shadowtls', 'shadowtls_version': '3'});
-		o.depends({'type': 'socks', 'socks_version': '5'});
-		o.validate = function(section_id, value) {
+	o.depends({'type': 'shadowtls', 'shadowtls_version': '2'});
+	o.depends({'type': 'shadowtls', 'shadowtls_version': '3'});
+	o.depends({'type': 'socks', 'socks_version': '5'});
+	o.validate = function(section_id, value) {
 		if (section_id) {
 			var type = this.map.lookupOption('type', section_id)[0].formvalue(section_id);
 			var required_type = [ 'shadowsocks', 'shadowtls', 'trojan' ];
@@ -459,86 +459,86 @@ function renderNodeSettings(section, data, features, main_node, routing_mode) {
 	}
 	o.modalonly = true;
 
-			/* URLTest and Selector config start */
-			o = s.option(form.MultiValue, 'outbounds', _('Outbounds'),
-				_('choose outbounds.'));
-			o.load = function (section_id) {
-				delete this.keylist;
-				delete this.vallist;
+	/* URLTest and Selector config start */
+	o = s.option(form.MultiValue, 'outbounds', _('Outbounds'),
+		_('choose outbounds.'));
+	o.load = function (section_id) {
+		delete this.keylist;
+		delete this.vallist;
 
-				this.value('direct-out', _('Direct'));
-				this.value('block-out', _('Block'));
-				uci.sections(data[0], 'node', (res) => {
-					this.value(res.label, res.label);
-				});
+		this.value('direct-out', _('Direct'));
+		this.value('block-out', _('Block'));
+		uci.sections(data[0], 'node', (res) => {
+			this.value(res.label, res.label);
+		});
 
-				return this.super('load', section_id);
+		return this.super('load', section_id);
+	}
+
+	o.depends('type', 'urltest');
+	o.depends('type', 'selector');
+	o.modalonly = true;
+
+	o = s.option(form.Value, 'url', _('Test URL'),
+		_('https://www.gstatic.com/generate_204 will be used if empty.'));
+	o.depends('type', 'urltest');
+	o.validate = function (section_id, value) {
+		if (section_id && value) {
+			try {
+				var url = new URL(value);
+				if (!url.hostname)
+					return _('Expecting: %s').format(_('valid URL'));
 			}
-
-			o.depends('type', 'urltest');
-			o.depends('type', 'selector');
-			o.modalonly = true;
-
-			o = s.option(form.Value, 'url', _('Test URL'),
-				_('https://www.gstatic.com/generate_204 will be used if empty.'));
-			o.depends('type', 'urltest');
-			o.validate = function (section_id, value) {
-				if (section_id && value) {
-					try {
-						var url = new URL(value);
-						if (!url.hostname)
-							return _('Expecting: %s').format(_('valid URL'));
-					}
-					catch (e) {
-						return _('Expecting: %s').format(_('valid URL'));
-					}
-				}
-
-				return true;
+			catch (e) {
+				return _('Expecting: %s').format(_('valid URL'));
 			}
-			o.modalonly = true;
+		}
 
-			o = s.option(form.Value, 'interval', _('Interval'),
-				_('The test interval. 3m will be used if empty.'));
-			o.depends('type', 'urltest');
-			o.modalonly = true;
+		return true;
+	}
+	o.modalonly = true;
 
-			o = s.option(form.Value, 'tolerance', _('Tolerance'),
-				_('The test tolerance in milliseconds. 50 will be used if empty.'));
-			o.datatype = 'uinteger';
-			o.depends('type', 'urltest');
-			o.modalonly = true;
+	o = s.option(form.Value, 'interval', _('Interval'),
+		_('The test interval. 3m will be used if empty.'));
+	o.depends('type', 'urltest');
+	o.modalonly = true;
 
-			o = s.option(form.Value, 'idle_timeout', _('Idle timeout'),
-				_('The idle timeout. 30m will be used if empty.'));
-			o.depends('type', 'urltest');
-			o.modalonly = true;
+	o = s.option(form.Value, 'tolerance', _('Tolerance'),
+		_('The test tolerance in milliseconds. 50 will be used if empty.'));
+	o.datatype = 'uinteger';
+	o.depends('type', 'urltest');
+	o.modalonly = true;
 
-			o = s.option(form.ListValue, 'default', _('Default outbound'),
-				_('The first outbound will be used if default.'));
-			o.load = function (section_id) {
-				delete this.keylist;
-				delete this.vallist;
-				this.value('', _('Default'));
-				this.value('direct-out', _('Direct'));
-				this.value('block-out', _('Block'));
-				uci.sections(data[0], 'node', (res) => {
-					this.value(res.label, res.label);
-				});
+	o = s.option(form.Value, 'idle_timeout', _('Idle timeout'),
+		_('The idle timeout. 30m will be used if empty.'));
+	o.depends('type', 'urltest');
+	o.modalonly = true;
 
-				return this.super('load', section_id);
-			}
-			o.depends('type', 'selector');
-			o.modalonly = true;
+	o = s.option(form.ListValue, 'default', _('Default outbound'),
+		_('The first outbound will be used if default.'));
+	o.load = function (section_id) {
+		delete this.keylist;
+		delete this.vallist;
+		this.value('', _('Default'));
+		this.value('direct-out', _('Direct'));
+		this.value('block-out', _('Block'));
+		uci.sections(data[0], 'node', (res) => {
+			this.value(res.label, res.label);
+		});
 
-			o = s.option(form.Flag, 'interrupt_exist_connections', _('Interrupt exist connections'),
-				_('Interrupt existing connections when the selected outbound has changed.<br/>' +
-					'Only inbound connections are affected by this setting, internal connections will always be interrupted.'));
-			o.default = so.disabled;
-			o.depends('type', 'urltest');
-			o.depends('type', 'selector');
-			o.modalonly = true;
-			/* URLTest and Selector config end */
+		return this.super('load', section_id);
+	}
+	o.depends('type', 'selector');
+	o.modalonly = true;
+
+	o = s.option(form.Flag, 'interrupt_exist_connections', _('Interrupt exist connections'),
+		_('Interrupt existing connections when the selected outbound has changed.<br/>' +
+			'Only inbound connections are affected by this setting, internal connections will always be interrupted.'));
+	o.default = o.disabled;
+	o.depends('type', 'urltest');
+	o.depends('type', 'selector');
+	o.modalonly = true;
+	/* URLTest and Selector config end */
 
 	/* Direct config */
 	o = s.option(form.Value, 'override_address', _('Override address'),
