@@ -101,7 +101,10 @@ const enable_clash_api = uci.get(uciconfig, uciexp, 'enable_clash_api'),
 const mixed_port = uci.get(uciconfig, uciinfra, 'mixed_port') || '5330';
 let self_mark, redirect_port, tproxy_port,
     tun_name, tun_addr4, tun_addr6, tun_mtu, tun_gso,
-    tcpip_stack, endpoint_independent_nat;
+    tcpip_stack, endpoint_independent_nat, udp_timeout;
+udp_timeout = uci.get(uciconfig, 'infra', 'udp_timeout');
+if (routing_mode === 'custom')
+	udp_timeout = uci.get(uciconfig, uciroutingsetting, 'udp_timeout');
 if (match(proxy_mode, /redirect/)) {
 	self_mark = uci.get(uciconfig, 'infra', 'self_mark') || '100';
 	redirect_port = uci.get(uciconfig, 'infra', 'redirect_port') || '5331';
@@ -501,6 +504,7 @@ push(config.inbounds, {
 	tag: 'mixed-in',
 	listen: '::',
 	listen_port: int(mixed_port),
+	udp_timeout: udp_timeout ? (udp_timeout + 's') : null,
 	sniff: true,
 	sniff_override_destination: (sniff_override === '1'),
 	set_system_proxy: false
@@ -524,6 +528,7 @@ if (match(proxy_mode, /tproxy/))
 		listen: '::',
 		listen_port: int(tproxy_port),
 		network: 'udp',
+		udp_timeout: udp_timeout ? (udp_timeout + 's') : null,
 		sniff: true,
 		sniff_override_destination: (sniff_override === '1')
 	});
@@ -539,6 +544,7 @@ if (match(proxy_mode, /tun/))
 		gso: (tun_gso === '1'),
 		auto_route: false,
 		endpoint_independent_nat: strToBool(endpoint_independent_nat),
+		udp_timeout: udp_timeout ? (udp_timeout + 's') : null,
 		stack: tcpip_stack,
 		sniff: true,
 		sniff_override_destination: (sniff_override === '1'),
