@@ -189,6 +189,7 @@ return baseclass.extend({
 			default:
 				return null;
 		};
+	},
 
 	loadDefaultLabel: function(uciconfig, ucisection) {
 		var label = uci.get(uciconfig, ucisection, 'label');
