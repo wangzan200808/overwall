@@ -239,8 +239,6 @@ return view.extend({
 		o.default = 'common';
 		o.validate = function(section_id, value) {
 			if (section_id && value && value !== 'common') {
-				if (!value)
-					return _('Expecting: %s').format(_('valid port value'));
 
 				var ports = [];
 				for (var i of value.split(',')) {
