@@ -1107,6 +1107,7 @@ return view.extend({
 			delete this.keylist;
 			delete this.vallist;
 
+			this.value('', _('Default'));
 			this.value('direct-out', _('Direct'));
 			uci.sections(data[0], 'node', (res) => {
 				this.value(res.label, res.label);
@@ -1114,8 +1115,6 @@ return view.extend({
 
 			return this.super('load', section_id);
 		}
-		so.default = 'direct-out';
-		so.rmempty = false;
 		so.depends('type', 'remote');
 
 		so = ss.option(form.Value, 'update_interval', _('Update interval'),
