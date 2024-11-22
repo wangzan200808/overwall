@@ -2,13 +2,14 @@
 /*
  * SPDX-License-Identifier: GPL-2.0-only
  *
- * Copyright (C) 2023 ImmortalWrt.org
+ * Copyright (C) 2023-2024 ImmortalWrt.org
  */
 
 'use strict';
 
 import { readfile, writefile } from 'fs';
 import { isnan } from 'math';
+import { connect } from 'ubus';
 import { cursor } from 'uci';
 
 import {
@@ -16,6 +17,10 @@ import {
 	removeBlankAttrs, validateHostname, validation,
 	HP_DIR, RUN_DIR
 } from 'homeproxy';
+
+const ubus = connect();
+
+const features = ubus.call('luci.homeproxy', 'singbox_get_features') || {};
 
 /* UCI config start */
 const uci = cursor();
@@ -41,11 +46,9 @@ const uciruleset = 'ruleset';
 
 const routing_mode = uci.get(uciconfig, ucimain, 'routing_mode') || 'bypass_mainland_china';
 
-let wan_dns = executeCommand('ifstatus wan | jsonfilter -e \'@["dns-server"][0]\'');
-if (wan_dns.exitcode === 0 && trim(wan_dns.stdout))
-	wan_dns = trim(wan_dns.stdout);
-else
-	wan_dns = (routing_mode in ['proxy_mainland_china', 'global']) ? '208.67.222.222' : '114.114.114.114';
+let wan_dns = ubus.call('network.interface', 'status', {'interface': 'wan'})?.['dns-server']?.[0];
+if (!wan_dns)
+	wan_dns = (routing_mode in ['proxy_mainland_china', 'global']) ? '8.8.8.8' : '223.5.5.5';
 
 const dns_port = uci.get(uciconfig, uciinfra, 'dns_port') || '5333';
 
@@ -472,7 +475,9 @@ if (!isEmpty(main_node)) {
 			process_path: cfg.process_path,
 			user: cfg.user,
 			rule_set: get_ruleset(cfg.rule_set),
-			rule_set_ipcidr_match_source: (cfg.rule_set_ipcidr_match_source === '1') || null,
+			/* rule_set_ipcidr_match_source is deprecated in sing-box 1.10.0 */
+			rule_set_ipcidr_match_source: (features.version < '1.10.0' && cfg.rule_set_ip_cidr_match_source  === '1') || null,
+			rule_set_ip_cidr_match_source: (features.version >= '1.10.0' && cfg.rule_set_ip_cidr_match_source  === '1') || null,
 			invert: (cfg.invert === '1') || null,
 			clash_mode: cfg.clash_mode,
 			outbound: cfg.outbound,
@@ -656,7 +661,9 @@ if (!isEmpty(main_node)) {
 			process_path: cfg.process_path,
 			user: cfg.user,
 			rule_set: get_ruleset(cfg.rule_set),
-			rule_set_ipcidr_match_source: (cfg.rule_set_ipcidr_match_source === '1') || null,
+			/* rule_set_ipcidr_match_source is deprecated in sing-box 1.10.0 */
+			rule_set_ipcidr_match_source: (features.version < '1.10.0' && cfg.rule_set_ip_cidr_match_source  === '1') || null,
+			rule_set_ip_cidr_match_source: (features.version >= '1.10.0' && cfg.rule_set_ip_cidr_match_source  === '1') || null,
 			invert: (cfg.invert === '1') || null,
 			clash_mode: cfg.clash_mode,
 			outbound: cfg.outbound
