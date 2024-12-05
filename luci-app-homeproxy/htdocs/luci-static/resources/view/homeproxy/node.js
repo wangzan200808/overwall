@@ -1104,6 +1104,7 @@ function renderNodeSettings(section, data, features, main_node, routing_mode) {
 		_('The path to the server certificate, in PEM format.'));
 	o.value('/etc/homeproxy/certs/client_ca.pem');
 	o.depends('tls_self_sign', '1');
+	o.validate = L.bind(hp.validateCertificatePath, this);
 	o.rmempty = false;
 	o.modalonly = true;
 
