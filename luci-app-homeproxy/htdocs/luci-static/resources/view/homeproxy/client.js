@@ -101,7 +101,7 @@ return view.extend({
 	},
 
 	render: function(data) {
-		const m, s, o, ss, so;
+		let m, s, o, ss, so;
 
 		var features = data[1],
 		    hosts = data[2]?.hosts;
