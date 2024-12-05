@@ -267,11 +267,13 @@ return view.extend({
 		o.depends({'type': 'hysteria2', 'hysteria_obfs_type': /[\s\S]/});
 		o.renderWidget = function() {
 			var node = form.Value.prototype.renderWidget.apply(this, arguments);
+			
 			(node.querySelector('.control-group') || node).appendChild(E('button', {
 				'class': 'cbi-button cbi-button-apply',
 				'title': _('Generate'),
 				'click': ui.createHandlerFn(this, handleGenKey, this.option)
 			}, [ _('Generate') ]));
+			
 			return node;
 		}
 		o.modalonly = true;
@@ -743,6 +745,7 @@ return view.extend({
 		o.depends({'tls': '1', 'tls_acme': '0', 'tls_reality': '0'});
 		o.depends({'tls': '1', 'tls_acme': null, 'tls_reality': '0'});
 		o.depends({'tls': '1', 'tls_acme': null, 'tls_reality': null});
+		o.validate = L.bind(hp.validateCertificatePath, this);
 		o.rmempty = false;
 		o.modalonly = true;
 
@@ -761,6 +764,7 @@ return view.extend({
 		o.depends({'tls': '1', 'tls_acme': '0', 'tls_reality': null});
 		o.depends({'tls': '1', 'tls_acme': null, 'tls_reality': '0'});
 		o.depends({'tls': '1', 'tls_acme': null, 'tls_reality': null});
+		o.validate = L.bind(hp.validateCertificatePath, this);
 		o.rmempty = false;
 		o.modalonly = true;
 
