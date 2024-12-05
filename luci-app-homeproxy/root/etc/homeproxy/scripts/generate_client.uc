@@ -607,10 +607,6 @@ config.route = {
 		{
 			inbound: 'dns-in',
 			outbound: 'dns-out'
-		},
-		{
-			protocol: 'dns',
-			outbound: 'dns-out'
 		}
 	],
 	rule_set: [],
