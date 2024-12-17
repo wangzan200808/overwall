@@ -607,11 +607,11 @@ return view.extend({
 
 		so = ss.taboption('field_other', form.Value, 'clash_mode', _('Clash Mode'),
 			_('Match Clash mode.'));
-		so.value('', _('-- Please choose --'));
-		so.value('direct', 'Direct');
-		so.value('rule', 'Rule');
-		so.value('global', 'Global');
-		so.value('script', 'Script');
+			so.value('', _('-- Please choose --'));
+			so.value('direct', 'Direct');
+			so.value('rule', 'Rule');
+			so.value('global', 'Global');
+			so.value('script', 'Script');
 
 		so = ss.taboption('field_other', form.Flag, 'rule_set_ip_cidr_match_source', _('Match source IP via rule set'),
 			_('Make IP CIDR in rule set used to match the source IP.'));
@@ -958,13 +958,13 @@ return view.extend({
 		}
 		so.modalonly = true;
 
-		so = ss.option(form.Value, 'clash_mode', _('Clash Mode'),
+		so = ss.taboption('field_other', form.Value, 'clash_mode', _('Clash Mode'),
 			_('Match Clash mode.'));
-		so.value('', _('-- Please choose --'));
-		so.value('direct', 'Direct');
-		so.value('rule', 'Rule');
-		so.value('global', 'Global');
-		so.value('script', 'Script');
+			so.value('', _('-- Please choose --'));
+			so.value('direct', 'Direct');
+			so.value('rule', 'Rule');
+			so.value('global', 'Global');
+			so.value('script', 'Script');
 
 		so = ss.taboption('field_other', form.Flag, 'rule_set_ip_cidr_match_source', _('Rule set IP CIDR as source IP'),
 			_('Make IP CIDR in rule sets match the source IP.'));
