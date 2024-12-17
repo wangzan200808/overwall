@@ -605,7 +605,7 @@ return view.extend({
 		}
 		so.modalonly = true;
 
-		so = ss.option(form.Value, 'clash_mode', _('Clash Mode'),
+		so = ss.taboption('field_other', form.Value, 'clash_mode', _('Clash Mode'),
 			_('Match Clash mode.'));
 		so.value('', _('-- Please choose --'));
 		so.value('direct', 'Direct');
