@@ -436,10 +436,10 @@ function renderNodeSettings(section, data, features, main_node, routing_mode) {
 	o.depends('type', 'ssh');
 	o.depends('type', 'trojan');
 	o.depends('type', 'tuic');
-	o.depends({'type': 'shadowtls', 'shadowtls_version': '2'});
-	o.depends({'type': 'shadowtls', 'shadowtls_version': '3'});
-	o.depends({'type': 'socks', 'socks_version': '5'});
-	o.validate = function(section_id, value) {
+		o.depends({'type': 'shadowtls', 'shadowtls_version': '2'});
+		o.depends({'type': 'shadowtls', 'shadowtls_version': '3'});
+		o.depends({'type': 'socks', 'socks_version': '5'});
+		o.validate = function(section_id, value) {
 		if (section_id) {
 			var type = this.map.lookupOption('type', section_id)[0].formvalue(section_id);
 			var required_type = [ 'shadowsocks', 'shadowtls', 'trojan' ];
