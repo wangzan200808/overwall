@@ -8,7 +8,7 @@
 ### 特点： 
 切换节点速度快 
 可以用clash面板
-## offload
+## offload（已弃用）
 turboacc的前身，因用不到turboacc的dns功能，将他单独提取 
 2024年12月发现仓库里这个turboacc而弃用offload 
 ## turboacc 
