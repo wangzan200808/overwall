@@ -476,8 +476,7 @@ if (!isEmpty(main_node)) {
 			user: cfg.user,
 			rule_set: get_ruleset(cfg.rule_set),
 			/* rule_set_ipcidr_match_source is deprecated in sing-box 1.10.0 */
-			rule_set_ipcidr_match_source: (features.version < '1.10.0' && cfg.rule_set_ip_cidr_match_source  === '1') || null,
-			rule_set_ip_cidr_match_source: (features.version >= '1.10.0' && cfg.rule_set_ip_cidr_match_source  === '1') || null,
+			rule_set_ip_cidr_match_source: (cfg.rule_set_ip_cidr_match_source  === '1') || null,
 			invert: (cfg.invert === '1') || null,
 			clash_mode: cfg.clash_mode,
 			outbound: cfg.outbound,
@@ -548,9 +547,7 @@ if (match(proxy_mode, /tun/))
 
 		interface_name: tun_name,
 		/* inet4_address and inet6_address are deprecated in sing-box 1.10.0 */
-		inet4_address: (features.version < '1.10.0') ? tun_addr4 : null,
-		inet6_address: (features.version < '1.10.0' && ipv6_support === '1') ? tun_addr6 : null,
-		address: (features.version >= '1.10.0') ? ((ipv6_support === '1') ? [tun_addr4, tun_addr6] : [tun_addr4]) : null,
+		address: (ipv6_support === '1') ? [tun_addr4, tun_addr6] : [tun_addr4],
 		mtu: strToInt(tun_mtu),
 		gso: (tun_gso === '1'),
 		auto_route: false,
@@ -659,8 +656,7 @@ if (!isEmpty(main_node)) {
 			user: cfg.user,
 			rule_set: get_ruleset(cfg.rule_set),
 			/* rule_set_ipcidr_match_source is deprecated in sing-box 1.10.0 */
-			rule_set_ipcidr_match_source: (features.version < '1.10.0' && cfg.rule_set_ip_cidr_match_source  === '1') || null,
-			rule_set_ip_cidr_match_source: (features.version >= '1.10.0' && cfg.rule_set_ip_cidr_match_source  === '1') || null,
+			rule_set_ip_cidr_match_source: (cfg.rule_set_ip_cidr_match_source  === '1') || null,
 			rule_set_ip_cidr_accept_empty: (cfg.rule_set_ip_cidr_accept_empty === '1') || null,
 			invert: (cfg.invert === '1') || null,
 			clash_mode: cfg.clash_mode,
