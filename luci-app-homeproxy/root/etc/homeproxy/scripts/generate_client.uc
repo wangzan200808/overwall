@@ -317,6 +317,8 @@ function get_outbound(cfg) {
 			const node = uci.get(uciconfig, cfg, 'label');
 			if (isEmpty(node))
 				die(sprintf("%s's node is missing, please check your configuration.", cfg));
+			else if (node === 'urltest')
+				return cfg;
 			else
 				return node;
 		}
@@ -589,13 +591,37 @@ if (!isEmpty(main_node)) {
 		push(config.outbounds, generate_outbound(main_udp_node_cfg));
 		config.outbounds[length(config.outbounds)-1].tag = 'main-udp-out';
 	}
-} else if (!isEmpty(default_outbound))
+} else if (!isEmpty(default_outbound)) {
+	let urltest_nodes = [],
+	    routing_nodes = [];
+
 	uci.foreach(uciconfig, 'node', (cfg) => {
 		push(config.outbounds, generate_outbound(cfg));
-		config.outbounds[length(config.outbounds)-1].domain_strategy = cfg.domain_strategy;
-		config.outbounds[length(config.outbounds)-1].bind_interface = cfg.bind_interface;
-		config.outbounds[length(config.outbounds)-1].detour = cfg.outbound;
+		if (cfg.node === 'urltest') {
+			push(config.outbounds, {
+				type: 'urltest',
+				tag: 'cfg['.name'],
+				outbounds: map(cfg.urltest_nodes, (k) => `cfg-${k}-out`),
+				url: cfg.urltest_url,
+				interval: cfg.urltest_interval ? (cfg.urltest_interval + 's') : null,
+				tolerance: strToInt(cfg.urltest_tolerance),
+				idle_timeout: cfg.urltest_idle_timeout ? (cfg.urltest_idle_timeout + 's') : null,
+				interrupt_exist_connections: (cfg.urltest_interrupt_exist_connections === '1')
+			});
+			urltest_nodes = [...urltest_nodes, ...filter(cfg.urltest_nodes, ((l) => !~index(urltest_nodes, l)))];
+		} else {
+			const outbound = uci.get_all(uciconfig, cfg.node) || {};
+			push(config.outbounds, generate_outbound(outbound));
+			config.outbounds[length(config.outbounds)-1].domain_strategy = cfg.domain_strategy;
+			config.outbounds[length(config.outbounds)-1].bind_interface = cfg.bind_interface;
+			config.outbounds[length(config.outbounds)-1].detour = cfg.outbound;
+			push(routing_nodes, cfg.node);
+		}
 	});
+
+	for (let i in filter(urltest_nodes, ((l) => !~index(routing_nodes, l))))
+		push(config.outbounds, generate_outbound(uci.get_all(uciconfig, i)));
+}
 /* Outbound end */
 
 /* Routing rules start */
@@ -607,7 +633,6 @@ config.route = {
 			outbound: 'dns-out'
 		}
 	],
-	rule_set: [],
 	auto_detect_interface: isEmpty(default_interface) ? true : null,
 	default_interface: default_interface
 };
@@ -669,6 +694,7 @@ if (!isEmpty(main_node)) {
 
 /* Rule set */
 if (routing_mode === 'custom') {
+	config.route.rule_set = [];
 	uci.foreach(uciconfig, uciruleset, (cfg) => {
 		if (cfg.enabled !== '1')
 			return null;
