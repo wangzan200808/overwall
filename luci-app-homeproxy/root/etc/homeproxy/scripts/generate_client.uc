@@ -596,11 +596,10 @@ if (!isEmpty(main_node)) {
 	    routing_nodes = [];
 
 	uci.foreach(uciconfig, 'node', (cfg) => {
-		push(config.outbounds, generate_outbound(cfg));
 		if (cfg.node === 'urltest') {
 			push(config.outbounds, {
 				type: 'urltest',
-				tag: 'cfg['.name'],
+				tag: 'cfg,
 				outbounds: map(cfg.urltest_nodes, (k) => `cfg-${k}-out`),
 				url: cfg.urltest_url,
 				interval: cfg.urltest_interval ? (cfg.urltest_interval + 's') : null,
@@ -611,7 +610,7 @@ if (!isEmpty(main_node)) {
 			urltest_nodes = [...urltest_nodes, ...filter(cfg.urltest_nodes, ((l) => !~index(urltest_nodes, l)))];
 		} else {
 			const outbound = uci.get_all(uciconfig, cfg.node) || {};
-			push(config.outbounds, generate_outbound(outbound));
+			push(config.outbounds, generate_outbound(cfg));
 			config.outbounds[length(config.outbounds)-1].domain_strategy = cfg.domain_strategy;
 			config.outbounds[length(config.outbounds)-1].bind_interface = cfg.bind_interface;
 			config.outbounds[length(config.outbounds)-1].detour = cfg.outbound;
