@@ -431,6 +431,8 @@ return view.extend({
 			return true;
 		}
   		so.depends({'node': 'urltest', '!reverse': true});
+    		so.editable = true;
+
 		so = ss.option(hp.CBIStaticList, 'urltest_nodes', _('URLTest nodes'),
 			_('List of nodes to test.'));
 		for (var i in proxy_nodes)
