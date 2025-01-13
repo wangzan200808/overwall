@@ -450,7 +450,7 @@ return view.extend({
 		so.modalonly = true;
 
 		so = ss.option(form.Value, 'urltest_url', _('Test URL'),
-			_('The URL to test. <code>https://www.gstatic.com/generate_204</code> will be used if empty.'));
+			_('The URL to test.'));
 		so.validate = function(section_id, value) {
 			if (section_id && value) {
 				try {
@@ -469,7 +469,7 @@ return view.extend({
 		so.modalonly = true;
 
 		so = ss.option(form.Value, 'urltest_interval', _('Test interval'),
-			_('The test interval in seconds. <code>180</code> will be used if empty.'));
+			_('The test interval in seconds.'));
 		so.datatype = 'uinteger';
 		so.validate = function(section_id, value) {
 			if (section_id && value) {
@@ -482,12 +482,12 @@ return view.extend({
 		so.depends('node', 'urltest');
 		so.modalonly = true;
 		so = ss.option(form.Value, 'urltest_tolerance', _('Test tolerance'),
-			_('The test tolerance in milliseconds. <code>50</code> will be used if empty.'));
+			_('The test tolerance in milliseconds.'));
 		so.datatype = 'uinteger';
 		so.depends('node', 'urltest');
 		so.modalonly = true;
 		so = ss.option(form.Value, 'urltest_idle_timeout', _('Idle timeout'),
-			_('The idle timeout in seconds. <code>1800</code> will be used if empty.'));
+			_('The idle timeout in seconds.'));
 		so.datatype = 'uinteger';
 		so.depends('node', 'urltest');
 		so.modalonly = true;
@@ -1193,7 +1193,7 @@ return view.extend({
 		so.depends('type', 'remote');
 
 		so = ss.option(form.Value, 'update_interval', _('Update interval'),
-			_('Update interval of rule set.<br/><code>1d</code> will be used if empty.'));
+			_('Update interval of rule set.'));
 		so.depends('type', 'remote');
 		/* Rule set settings end */
 
