@@ -928,12 +928,6 @@ function renderNodeSettings(section, data, features, main_node, routing_mode) {
 	/* Transport config end */
 
 	/* Wireguard config start */
-	o = s.option(form.Flag, 'wireguard_gso', _('Generic segmentation offload'));
-	o.default = o.disabled;
-	o.depends('type', 'wireguard');
-	o.rmempty = false;
-	o.modalonly = true;
-
 	o = s.option(form.DynamicList, 'wireguard_local_address', _('Local address'),
 		_('List of IP (v4 or v6) addresses prefixes to be assigned to the interface.'));
 	o.datatype = 'cidr';
@@ -973,6 +967,12 @@ function renderNodeSettings(section, data, features, main_node, routing_mode) {
 	o.placeholder = '1408';
 	o.depends('type', 'wireguard');
 	o.modalonly = true;
+
+ 	o = s.option(form.Value, 'wireguard_persistent_keepalive_interval', _('Persistent keepalive interval'),
+ 		_('In seconds. Disabled by default.'));
+ 	o.datatype = 'uinteger';
+ 	o.depends('type', 'wireguard');
+ 	o.modalonly = true;
 	/* Wireguard config end */
 
 	/* Mux config start */
