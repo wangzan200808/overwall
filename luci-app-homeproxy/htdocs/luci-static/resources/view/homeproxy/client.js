@@ -265,7 +265,6 @@ return view.extend({
 
 		ss = o.subsection;
 		so = ss.option(form.Flag, 'tun_gso', _('Generic segmentation offload'));
-		so.default = so.disabled;
 		so.depends('homeproxy.config.proxy_mode', 'redirect_tun');
 		so.depends('homeproxy.config.proxy_mode', 'tun');
 		so.rmempty = false;
@@ -309,7 +308,6 @@ return view.extend({
 		
 		so = ss.option(form.Flag, 'bypass_cn_traffic', _('Bypass CN traffic'),
 			_('Bypass mainland China traffic via firewall rules by default.'));
-		so.default = so.disabled;
 		so.rmempty = false;
 
 		so = ss.option(form.ListValue, 'domain_strategy', _('Domain strategy'),
@@ -329,7 +327,6 @@ return view.extend({
 
 			this.value('nil', _('Disable'));
 			this.value('direct-out', _('Direct'));
-			this.value('block-out', _('Block'));
 			uci.sections(data[0], 'node', (res) => {
 				this.value(res.label, res.label);
 			});
@@ -474,7 +471,6 @@ return view.extend({
 		so.modalonly = true;
 		so = ss.option(form.Flag, 'urltest_interrupt_exist_connections', _('Interrupt existing connections'),
 			_('Interrupt existing connections when the selected outbound has changed.'));
-		so.default = so.disabled;
 		so.depends('node', 'urltest');
 		so.modalonly = true;
 		*/
@@ -495,10 +491,9 @@ return view.extend({
 		ss.renderSectionAdd = L.bind(hp.renderSectionAdd, this, ss);
 
 		ss.tab('field_other', _('Other fields'));
-		ss.tab('field_host', _('Host fields'));
+		ss.tab('field_host', _('Host/IP fields'));
 		ss.tab('field_port', _('Port fields'));
-		ss.tab('field_source_ip', _('SRC-IP fields'));
-		ss.tab('field_source_port', _('SRC-Port fields'));
+		ss.tab('fields_process', _('Process fields'));
 
 		so = ss.taboption('field_other', form.Value, 'label', _('Label'));
 		so.load = L.bind(hp.loadDefaultLabel, this, data[0]);
@@ -556,6 +551,61 @@ return view.extend({
 		so.value('tcp', _('TCP'));
 		so.value('udp', _('UDP'));
 		so.value('', _('Both'));
+		
+		so = ss.taboption('field_other', form.DynamicList, 'user', _('User'),
+			_('Match user name.'));
+		so.modalonly = true;
+
+		so = ss.taboption('field_other', hp.CBIStaticList, 'rule_set', _('Rule set'),
+			_('Match rule set.'));
+		so.load = function(section_id) {
+			delete this.keylist;
+			delete this.vallist;
+
+			uci.sections(data[0], 'ruleset', (res) => {
+				if (res.enabled === '1')
+					this.value(res['.name'], res.label);
+			});
+
+			return this.super('load', section_id);
+		}
+		so.modalonly = true;
+
+		so = ss.taboption('field_other', form.Flag, 'rule_set_ip_cidr_match_source', _('Rule set IP CIDR as source IP'),
+			_('Make IP CIDR in rule set used to match the source IP.'));
+		so.modalonly = true;
+
+		so = ss.taboption('field_other', form.Flag, 'invert', _('Invert'),
+			_('Invert match result.'));
+		so.modalonly = true;
+
+		so = ss.taboption('field_other', form.ListValue, 'outbound', _('Outbound'),
+			_('Tag of the target outbound.'));
+		so.load = function(section_id) {
+			delete this.keylist;
+			delete this.vallist;
+
+			this.value('direct-out', _('Direct'));
+			this.value('block-out', _('Block'));
+			uci.sections(data[0], 'routing_node', (res) => {
+				if (res.enabled === '1')
+					this.value(res['.name'], res.label);
+			});
+
+			return this.super('load', section_id);
+		}
+		so.rmempty = false;
+		so.editable = true;
+
+		so = ss.taboption('field_other', form.Value, 'override_address', _('Override address'),
+			_('Override the connection destination address.'));
+		so.datatype = 'ipaddr';
+		so.modalonly = true;
+
+		so = ss.taboption('field_other', form.Value, 'override_port', _('Override port'),
+			_('Override the connection destination port.'));
+		so.datatype = 'port';
+		so.modalonly = true;
 
 		so = ss.taboption('field_host', form.DynamicList, 'domain', _('Domain name'),
 			_('Match full domain.'));
@@ -574,14 +624,12 @@ return view.extend({
 			_('Match domain using regular expression.'));
 		so.modalonly = true;
 
-		so = ss.taboption('field_source_ip', form.DynamicList, 'source_ip_cidr', _('Source IP CIDR'),
+		so = ss.taboption('field_host', form.DynamicList, 'source_ip_cidr', _('Source IP CIDR'),
 			_('Match source IP CIDR.'));
 		so.datatype = 'or(cidr, ipaddr)';
 		so.modalonly = true;
 
-		so = ss.taboption('field_source_ip', form.Flag, 'source_ip_is_private', _('Private source IP'),
-			_('Match private source IP.'));
-		so.default = so.disabled;
+		so = ss.taboption('field_host', form.Flag, 'source_ip_is_private', _('Match private source IP'));
 		so.modalonly = true;
 
 		so = ss.taboption('field_host', form.DynamicList, 'ip_cidr', _('IP CIDR'),
@@ -589,17 +637,15 @@ return view.extend({
 		so.datatype = 'or(cidr, ipaddr)';
 		so.modalonly = true;
 
-		so = ss.taboption('field_host', form.Flag, 'ip_is_private', _('Private IP'),
-			_('Match private IP.'));
-		so.default = so.disabled;
+		so = ss.taboption('field_host', form.Flag, 'ip_is_private', _('Match private IP'));
 		so.modalonly = true;
 
-		so = ss.taboption('field_source_port', form.DynamicList, 'source_port', _('Source port'),
+		so = ss.taboption('field_port', form.DynamicList, 'source_port', _('Source port'),
 			_('Match source port.'));
 		so.datatype = 'port';
 		so.modalonly = true;
 
-		so = ss.taboption('field_source_port', form.DynamicList, 'source_port_range', _('Source port range'),
+		so = ss.taboption('field_port', form.DynamicList, 'source_port_range', _('Source port range'),
 			_('Match source port range. Format as START:/:END/START:END.'));
 		so.validate = hp.validatePortRange;
 		so.modalonly = true;
@@ -614,35 +660,16 @@ return view.extend({
 		so.validate = hp.validatePortRange;
 		so.modalonly = true;
 
-		so = ss.taboption('field_other', form.DynamicList, 'process_name', _('Process name'),
+		so = ss.taboption('fields_process', form.DynamicList, 'process_name', _('Process name'),
 			_('Match process name.'));
 		so.modalonly = true;
 
-		so = ss.taboption('field_other', form.DynamicList, 'process_path', _('Process path'),
+		so = ss.taboption('fields_process', form.DynamicList, 'process_path', _('Process path'),
 			_('Match process path.'));
 		so.modalonly = true;
 
-		so = ss.taboption('field_other', form.DynamicList, 'process_path_regex', _('Process path (regex)'),
+		so = ss.taboption('fields_process', form.DynamicList, 'process_path_regex', _('Process path (regex)'),
 			_('Match process path using regular expression.'));
-		so.modalonly = true;
-
-		so = ss.taboption('field_other', form.DynamicList, 'user', _('User'),
-			_('Match user name.'));
-		so.modalonly = true;
-
-		so = ss.taboption('field_other', hp.CBIStaticList, 'rule_set', _('Rule set'),
-			_('Match rule set.'));
-		so.load = function(section_id) {
-			delete this.keylist;
-			delete this.vallist;
-
-			uci.sections(data[0], 'ruleset', (res) => {
-				if (res.enabled === '1')
-					this.value(res.label, res.label);
-			});
-
-			return this.super('load', section_id);
-		}
 		so.modalonly = true;
 
 		so = ss.taboption('field_other', form.Value, 'clash_mode', _('Clash Mode'),
@@ -652,33 +679,6 @@ return view.extend({
 			so.value('rule', 'Rule');
 			so.value('global', 'Global');
 			so.value('script', 'Script');
-
-		so = ss.taboption('field_other', form.Flag, 'rule_set_ip_cidr_match_source', _('Rule set IP CIDR as source IP'),
-			_('Make IP CIDR in rule set used to match the source IP.'));
-		so.default = so.disabled;
-		so.modalonly = true;
-
-		so = ss.taboption('field_other', form.Flag, 'invert', _('Invert'),
-			_('Invert match result.'));
-		so.default = so.disabled;
-		so.modalonly = true;
-
-		so = ss.taboption('field_other', form.ListValue, 'outbound', _('Outbound'),
-			_('Tag of the target outbound.'));
-		so.load = function(section_id) {
-			delete this.keylist;
-			delete this.vallist;
-
-			this.value('direct-out', _('Direct'));
-			this.value('block-out', _('Block'));
-			uci.sections(data[0], 'node', (res) => {
-				this.value(res.label, res.label);
-			});
-
-			return this.super('load', section_id);
-		}
-		so.rmempty = false;
-		so.editable = true;
 		/* Routing rules end */
 
 		/* DNS settings start */
@@ -699,7 +699,6 @@ return view.extend({
 
 			this.value('default-dns', _('Default DNS (issued by WAN)'));
 			this.value('system-dns', _('System DNS'));
-			this.value('block-dns', _('Block DNS queries'));
 			uci.sections(data[0], 'dns_server', (res) => {
 				if (res.enabled === '1')
 					this.value(res.label, res.label);
@@ -711,15 +710,12 @@ return view.extend({
 		so.rmempty = false;
 
 		so = ss.option(form.Flag, 'disable_cache', _('Disable DNS cache'));
-		so.default = so.disabled;
 
 		so = ss.option(form.Flag, 'disable_cache_expire', _('Disable cache expire'));
-		so.default = so.disabled;
 		so.depends('disable_cache', '0');
 
 		so = ss.option(form.Flag, 'independent_cache', _('Independent cache per server'),
 			_('Make each DNS server\'s cache independent for special purposes. If enabled, will slightly degrade performance.'));
-		so.default = so.disabled;
 		so.depends('disable_cache', '0');
 
 		so = ss.option(form.Value, 'client_subnet', _('EDNS Client subnet'),
@@ -730,7 +726,6 @@ return view.extend({
 		so = ss.option(form.Flag, 'cache_file_store_rdrc', _('Store RDRC'),
 			_('Store rejected DNS response cache.<br/>' +
 			'The check results of <code>Address filter DNS rule items</code> will be cached until expiration.'));
-		so.default = so.disabled;
 
 		so = ss.option(form.Value, 'cache_file_rdrc_timeout', _('RDRC timeout'),
 			_('Timeout of rejected DNS response cache in seconds. <code>604800 (7d)</code> is used by default.'));
@@ -872,10 +867,9 @@ return view.extend({
 		ss.renderSectionAdd = L.bind(hp.renderSectionAdd, this, ss);
 
 		ss.tab('field_other', _('Other fields'));
-		ss.tab('field_host', _('Host fields'));
+		ss.tab('field_host', _('Host/IP fields'));
 		ss.tab('field_port', _('Port fields'));
-		ss.tab('field_source_ip', _('SRC-IP fields'));
-		ss.tab('field_source_port', _('SRC-Port fields'));
+		ss.tab('fields_process', _('Process fields'));
 
 		so = ss.taboption('field_other', form.Value, 'label', _('Label'));
 		so.load = L.bind(hp.loadDefaultLabel, this, data[0]);
@@ -926,75 +920,6 @@ return view.extend({
 		so.value('stun', _('STUN'));
 		so.value('tls', _('TLS'));
 
-		so = ss.taboption('field_host', form.DynamicList, 'domain', _('Domain name'),
-			_('Match full domain.'));
-		so.datatype = 'hostname';
-		so.modalonly = true;
-
-		so = ss.taboption('field_host', form.DynamicList, 'domain_suffix', _('Domain suffix'),
-			_('Match domain suffix.'));
-		so.modalonly = true;
-
-		so = ss.taboption('field_host', form.DynamicList, 'domain_keyword', _('Domain keyword'),
-			_('Match domain using keyword.'));
-		so.modalonly = true;
-
-		so = ss.taboption('field_host', form.DynamicList, 'domain_regex', _('Domain regex'),
-			_('Match domain using regular expression.'));
-		so.modalonly = true;
-
-		so = ss.taboption('field_port', form.DynamicList, 'port', _('Port'),
-			_('Match port.'));
-		so.datatype = 'port';
-		so.modalonly = true;
-
-		so = ss.taboption('field_port', form.DynamicList, 'port_range', _('Port range'),
-			_('Match port range. Format as START:/:END/START:END.'));
-		so.validate = hp.validatePortRange;
-		so.modalonly = true;
-
-		so = ss.taboption('field_source_ip', form.DynamicList, 'source_ip_cidr', _('Source IP CIDR'),
-			_('Match source IP CIDR.'));
-		so.datatype = 'or(cidr, ipaddr)';
-		so.modalonly = true;
-
-		so = ss.taboption('field_source_ip', form.Flag, 'source_ip_is_private', _('Private source IP'),
-			_('Match private source IP.'));
-		so.default = so.disabled;
-		so.modalonly = true;
-
-		so = ss.taboption('field_other', form.DynamicList, 'ip_cidr', _('IP CIDR'),
-			_('Match IP CIDR with query response.'));
-		so.datatype = 'or(cidr, ipaddr)';
-		so.modalonly = true;
-
-		so = ss.taboption('field_other', form.Flag, 'ip_is_private', _('Private IP'),
-			_('Match private IP with query response.'));
-		so.default = so.disabled;
-		so.modalonly = true;
-
-		so = ss.taboption('field_source_port', form.DynamicList, 'source_port', _('Source port'),
-			_('Match source port.'));
-		so.datatype = 'port';
-		so.modalonly = true;
-
-		so = ss.taboption('field_source_port', form.DynamicList, 'source_port_range', _('Source port range'),
-			_('Match source port range. Format as START:/:END/START:END.'));
-		so.validate = hp.validatePortRange;
-		so.modalonly = true;
-
-		so = ss.taboption('field_other', form.DynamicList, 'process_name', _('Process name'),
-			_('Match process name.'));
-		so.modalonly = true;
-
-		so = ss.taboption('field_other', form.DynamicList, 'process_path', _('Process path'),
-			_('Match process path.'));
-		so.modalonly = true;
-
-		so = ss.taboption('field_other', form.DynamicList, 'process_path_regex', _('Process path (regex)'),
-			_('Match process path using regular expression.'));
-		so.modalonly = true;
-
 		so = ss.taboption('field_other', form.DynamicList, 'user', _('User'),
 			_('Match user name.'));
 		so.modalonly = true;
@@ -1024,17 +949,14 @@ return view.extend({
 
 		so = ss.taboption('field_other', form.Flag, 'rule_set_ip_cidr_match_source', _('Rule set IP CIDR as source IP'),
 			_('Make IP CIDR in rule sets match the source IP.'));
-		so.default = so.disabled;
 		so.modalonly = true;
 
 		so = ss.taboption('field_other', form.Flag, 'rule_set_ip_cidr_accept_empty', _('Accept empty query response'),
 			_('Make IP CIDR in rule-sets accept empty query response.'));
-		so.default = so.disabled;
 		so.modalonly = true;
 
 		so = ss.taboption('field_other', form.Flag, 'invert', _('Invert'),
 			_('Invert match result.'));
-		so.default = so.disabled;
 		so.modalonly = true;
 
 		so = ss.taboption('field_other', form.MultiValue, 'outbound', _('Outbound'),
@@ -1075,18 +997,86 @@ return view.extend({
 
 		so = ss.taboption('field_other', form.Flag, 'dns_disable_cache', _('Disable dns cache'),
 			_('Disable cache and save cache in this query.'));
-		so.default = so.disabled;
+		so.depends({'server': 'block-dns', '!reverse': true});
 		so.modalonly = true;
 
 		so = ss.taboption('field_other', form.Value, 'rewrite_ttl', _('Rewrite TTL'),
 			_('Rewrite TTL in DNS responses.'));
 		so.datatype = 'uinteger';
+		so.depends({'server': 'block-dns', '!reverse': true});
 		so.modalonly = true;
 
 		so = ss.taboption('field_other', form.Value, 'client_subnet', _('EDNS Client subnet'),
 			_('Append a <code>edns0-subnet</code> OPT extra record with the specified IP prefix to every query by default.<br/>' +
 			'If value is an IP address instead of prefix, <code>/32</code> or <code>/128</code> will be appended automatically.'));
 		so.datatype = 'or(cidr, ipaddr)';
+		so.depends({'server': 'block-dns', '!reverse': true});
+
+		so = ss.taboption('field_host', form.DynamicList, 'domain', _('Domain name'),
+			_('Match full domain.'));
+		so.datatype = 'hostname';
+		so.modalonly = true;
+
+		so = ss.taboption('field_host', form.DynamicList, 'domain_suffix', _('Domain suffix'),
+			_('Match domain suffix.'));
+		so.modalonly = true;
+
+		so = ss.taboption('field_host', form.DynamicList, 'domain_keyword', _('Domain keyword'),
+			_('Match domain using keyword.'));
+		so.modalonly = true;
+
+		so = ss.taboption('field_host', form.DynamicList, 'domain_regex', _('Domain regex'),
+			_('Match domain using regular expression.'));
+		so.modalonly = true;
+
+		so = ss.taboption('field_host', form.DynamicList, 'source_ip_cidr', _('Source IP CIDR'),
+			_('Match source IP CIDR.'));
+		so.datatype = 'or(cidr, ipaddr)';
+		so.modalonly = true;
+
+		so = ss.taboption('field_host', form.Flag, 'source_ip_is_private', _('Match private source IP'));
+		so.modalonly = true;
+
+		so = ss.taboption('field_host', form.DynamicList, 'ip_cidr', _('IP CIDR'),
+			_('Match IP CIDR with query response. Current rule will be skipped if not match.'));
+		so.datatype = 'or(cidr, ipaddr)';
+		so.modalonly = true;
+
+		so = ss.taboption('field_host', form.Flag, 'ip_is_private', _('Match private IP'),
+			_('Match private IP with query response.'));
+		so.modalonly = true;
+
+		so = ss.taboption('field_port', form.DynamicList, 'source_port', _('Source port'),
+			_('Match source port.'));
+		so.datatype = 'port';
+		so.modalonly = true;
+
+		so = ss.taboption('field_port', form.DynamicList, 'source_port_range', _('Source port range'),
+			_('Match source port range. Format as START:/:END/START:END.'));
+		so.validate = hp.validatePortRange;
+		so.modalonly = true;
+
+		so = ss.taboption('field_port', form.DynamicList, 'port', _('Port'),
+			_('Match port.'));
+		so.datatype = 'port';
+		so.modalonly = true;
+
+		so = ss.taboption('field_port', form.DynamicList, 'port_range', _('Port range'),
+			_('Match port range. Format as START:/:END/START:END.'));
+		so.validate = hp.validatePortRange;
+		so.modalonly = true;
+
+		so = ss.taboption('fields_process', form.DynamicList, 'process_name', _('Process name'),
+			_('Match process name.'));
+		so.modalonly = true;
+
+		so = ss.taboption('fields_process', form.DynamicList, 'process_path', _('Process path'),
+			_('Match process path.'));
+		so.modalonly = true;
+
+		so = ss.taboption('fields_process', form.DynamicList, 'process_path_regex', _('Process path (regex)'),
+			_('Match process path using regular expression.'));
+		so.modalonly = true;
 		/* DNS rules end */
 		/* Custom routing settings end */
 
