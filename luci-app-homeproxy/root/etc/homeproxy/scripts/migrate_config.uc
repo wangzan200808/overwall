@@ -67,8 +67,12 @@
  	/* tls_ech_tls_disable_drs is useless and deprecated in sb 1.12 */
  	if (!isEmpty(cfg.tls_ech_tls_disable_drs))
  		uci.delete(uciconfig, cfg, 'tls_ech_tls_disable_drs');
+
+	/* wireguard_gso was deprecated in sb 1.11 */
+ 	if (!isEmpty(cfg.wireguard_gso))
+ 		uci.delete(uciconfig, cfg, 'wireguard_gso');
  });
- 
+
  /* routing rules options */
  uci.foreach(uciconfig, uciroutingrule, (cfg) => {
  	/* rule_set_ipcidr_match_source was renamed in sb 1.10 */
