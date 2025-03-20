@@ -267,7 +267,7 @@ return view.extend({
 		o.depends({'type': 'hysteria2', 'hysteria_obfs_type': /[\s\S]/});
 		o.renderWidget = function() {
 			let node = form.Value.prototype.renderWidget.apply(this, arguments);
-	
+
 			(node.querySelector('.control-group') || node).appendChild(E('button', {
 				'class': 'cbi-button cbi-button-apply',
 				'title': _('Generate'),
@@ -340,7 +340,7 @@ return view.extend({
 			}, [ _('Generate') ]));
 
 			return node;
-		}	
+		}
 		o.validate = hp.validateUUID;
 		o.modalonly = true;
 
