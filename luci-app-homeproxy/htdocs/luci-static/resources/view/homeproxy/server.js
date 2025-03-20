@@ -192,7 +192,7 @@ return view.extend({
 			}, [ _('Generate') ]));
 
 			return node;
-		}	
+		}
 		o.validate = function(section_id, value) {
 			if (section_id) {
 				let type = this.section.formvalue(section_id, 'type');
@@ -267,13 +267,13 @@ return view.extend({
 		o.depends({'type': 'hysteria2', 'hysteria_obfs_type': /[\s\S]/});
 		o.renderWidget = function() {
 			let node = form.Value.prototype.renderWidget.apply(this, arguments);
-			
+	
 			(node.querySelector('.control-group') || node).appendChild(E('button', {
 				'class': 'cbi-button cbi-button-apply',
 				'title': _('Generate'),
 				'click': ui.createHandlerFn(this, handleGenKey, this.option)
 			}, [ _('Generate') ]));
-			
+
 			return node;
 		}
 		o.modalonly = true;
@@ -340,7 +340,7 @@ return view.extend({
 			}, [ _('Generate') ]));
 
 			return node;
-		}		
+		}	
 		o.validate = hp.validateUUID;
 		o.modalonly = true;
 
@@ -567,7 +567,7 @@ return view.extend({
 		o = s.option(form.ListValue, 'tls_min_version', _('Minimum TLS version'),
 			_('The minimum TLS version that is acceptable.'));
 		o.value('', _('default'));
-		for let i of hp.tls_versions)
+		for (let i of hp.tls_versions)
 			o.value(i);
 		o.depends('tls', '1');
 		o.modalonly = true;
