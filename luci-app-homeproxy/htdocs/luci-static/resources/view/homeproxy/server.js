@@ -793,7 +793,7 @@ return view.extend({
 		o.cols = 30
 		o.rows = 3;
 		o.hp_options = {
-			type: 'ech-keypair',Add commentMore actions
+			type: 'ech-keypair',
 			params: '',
 			result: {
 				ech_key: o.option,
