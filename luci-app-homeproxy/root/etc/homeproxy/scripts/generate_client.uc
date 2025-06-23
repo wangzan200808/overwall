@@ -396,7 +396,7 @@ config.log = {
 	timestamp: true
 };
 
-/* NTP */Add commentMore actions
+/* NTP */
 config.ntp = {
 	enabled: true,
 	server: ntp_server,
@@ -424,7 +424,8 @@ config.dns = {
 			address: 'rcode://name_error'
 		}
 	],
-	        /* TODO: remove this once we have sing-box 1.12 */Add commentMore actions
+	rules: [
+	        /* TODO: remove this once we have sing-box 1.12 */
 	        /* NTP domain must be resolved by default DNS */
 		{
 			domain: ntp_server,
