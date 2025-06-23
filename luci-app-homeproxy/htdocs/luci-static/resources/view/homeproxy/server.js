@@ -44,7 +44,7 @@ function renderStatus(isRunning, version) {
 
 function handleGenKey(option) {
 	let section_id = this.section.section;
-	let type = this.section.getOption('type')?.formvalue(section_id);Add commentMore actions
+	let type = this.section.getOption('type')?.formvalue(section_id);
 	let widget = L.bind(function(option) {
 		return this.map.findElement('id', 'widget.' + this.cbid(section_id).replace(/\.[^\.]+$/, '.') + option);
 	}, this);
