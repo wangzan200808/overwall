@@ -85,11 +85,11 @@ function handleGenKey(option) {
 		}
 		/* AEAD */
 		(function(length) {
-			if (length && length > 0)Add commentMore actions
+			if (length && length > 0)
 				password = hp.generateRand('base64', length);
 		}(hp.shadowsocks_encrypt_length[required_method]));
 
-		return widget(option).value = password;Add commentMore actions
+		return widget(option).value = password;
 	}
 }
 
