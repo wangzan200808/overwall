@@ -154,7 +154,7 @@ const methods = {
 		}
 	},
 
-	singbox_generator: {Add commentMore actions
+	singbox_generator: {
 		args: { type: 'type', params: 'params' },
 		call: function(req) {
 			if (!(req.args?.type in ['ech-keypair', 'uuid', 'reality-keypair', 'vapid-keypair', 'wg-keypair']))
