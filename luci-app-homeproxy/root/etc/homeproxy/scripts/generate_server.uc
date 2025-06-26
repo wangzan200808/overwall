@@ -138,7 +138,7 @@ uci.foreach(uciconfig, uciserver, (cfg) => {
 			} : null,
 			ech: (cfg.tls_ech_key) ? {
 				enabled: true,
-				key: split(cfg.tls_ech_key, '\n'),Add commentMore actions
+				key: split(cfg.tls_ech_key, '\n'),
 				// config: split(cfg.tls_ech_config, '\n')
 			} : null,
 			reality: (cfg.tls_reality === '1') ? {
