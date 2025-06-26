@@ -27,7 +27,7 @@ return baseclass.extend({
 		'aes-192-gcm': 0,
 		'aes-256-gcm': 0,
 		'chacha20-ietf-poly1305': 0,
-		'xchacha20-ietf-poly1305': 0,Add commentMore actions
+		'xchacha20-ietf-poly1305': 0,
 		/* AEAD 2022 */
 		'2022-blake3-aes-128-gcm': 16,
 		'2022-blake3-aes-256-gcm': 32,
