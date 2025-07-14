@@ -191,6 +191,9 @@ function generate_endpoint(node) {
  			}
  		] : null,
  		system: (node.type === 'wireguard') ? false : null,
+		tcp_fast_open: strToBool(node.tcp_fast_open),
+		tcp_multi_path: strToBool(node.tcp_multi_path),
+		udp_fragment: strToBool(node.udp_fragment)
  	};
  
  	return endpoint;
@@ -668,6 +671,7 @@ if (!isEmpty(main_node)) {
 		const main_udp_node_cfg = uci.get_all(uciconfig, main_udp_node) || {};
 		if (main_udp_node_cfg.type === 'wireguard') {
  			push(config.endpoints, generate_endpoint(main_udp_node_cfg));
+			config.endpoints[length(config.endpoints)-1].domain_strategy = (ipv6_support !== '1') ? 'prefer_ipv4' : null;
  			config.endpoints[length(config.endpoints)-1].tag = 'main-udp-out';
  		} else {
  			push(config.outbounds, generate_outbound(main_udp_node_cfg));
