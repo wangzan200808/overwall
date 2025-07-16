@@ -424,7 +424,7 @@ config.dns = {
 		},
 		{
 			tag: 'block-dns',
-			address: 'rcode://name_error'
+			address: 'rcode://refused'
 		}
 	],
 	rules: [
