@@ -553,12 +553,17 @@ if (!isEmpty(main_node)) {
 			invert: (cfg.invert === '1') || null,
 			clash_mode: cfg.clash_mode,
 			outbound: cfg.outbound,
-			action: (cfg.server === 'block-dns') ? 'reject' : 'route',
+			action: cfg.action,
 			server: get_resolver(cfg.server),
 			disable_cache: (cfg.dns_disable_cache === '1') || null,
 			rewrite_ttl: strToInt(cfg.rewrite_ttl),
-			client_subnet: cfg.client_subnet
-
+			client_subnet: cfg.client_subnet,
+			method: cfg.reject_method,
+			no_drop: (cfg.reject_no_drop === '1') || null,
+			rcode: cfg.predefined_rcode,
+			answer: cfg.predefined_answer,
+			ns: cfg.predefined_ns,
+			extra: cfg.predefined_extra
 		});
 	});
 
