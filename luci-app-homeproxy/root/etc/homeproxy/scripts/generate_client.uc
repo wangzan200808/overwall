@@ -54,10 +54,11 @@ const dns_port = uci.get(uciconfig, uciinfra, 'dns_port') || '5333';
 
 const ntp_server = uci.get(uciconfig, uciinfra, 'ntp_server') || 'time.apple.com';
 
-let main_node, main_udp_node, dedicated_udp_node, default_outbound, domain_strategy, sniff_override,
-    dns_server, china_dns_server, dns_default_strategy, dns_default_server, dns_disable_cache,
-    dns_disable_cache_expire, dns_independent_cache, dns_client_subnet, cache_file_store_rdrc,
-    cache_file_rdrc_timeout, direct_domain_list, proxy_domain_list;
+let main_node, main_udp_node, dedicated_udp_node, default_outbound, default_outbound_dns,
+    domain_strategy, sniff_override, dns_server, china_dns_server, dns_default_strategy,
+    dns_default_server, dns_disable_cache, dns_disable_cache_expire, dns_independent_cache,
+    dns_client_subnet, cache_file_store_rdrc, cache_file_rdrc_timeout, direct_domain_list,
+    proxy_domain_list;
 
 if (routing_mode !== 'custom') {
 	main_node = uci.get(uciconfig, ucimain, 'main_node') || 'nil';
@@ -96,6 +97,7 @@ if (routing_mode !== 'custom') {
 
 	/* Routing settings */
 	default_outbound = uci.get(uciconfig, uciroutingsetting, 'default_outbound') || 'nil';
+	default_outbound_dns = uci.get(uciconfig, uciroutingsetting, 'default_outbound_dns') || 'default-dns';
 	domain_strategy = uci.get(uciconfig, uciroutingsetting, 'domain_strategy');
 	sniff_override = uci.get(uciconfig, uciroutingsetting, 'sniff_override');
 }
@@ -371,8 +373,6 @@ function get_resolver(cfg) {
 		return null;
 
 	switch (cfg) {
- 	case 'block-dns':
-		return null;
  	case 'default-dns':
  	case 'system-dns':
 		return cfg;
@@ -445,13 +445,6 @@ if (!isEmpty(main_node)) {
 		detour: 'main-out'
 	});
 	config.dns.final = 'main-dns';
-
-	/* Avoid DNS loop */
-	push(config.dns.rules, {
-		outbound: 'any',
-		action: 'route',
-		server: 'default-dns'
-	});
 
 	if (length(direct_domain_list))
 		push(config.dns.rules, {
@@ -658,7 +651,6 @@ if (!isEmpty(main_node)) {
  			config.endpoints[length(config.endpoints)-1].tag = 'main-out';
  		} else {
  			push(config.outbounds, generate_outbound(main_node_cfg));
- 			config.outbounds[length(config.outbounds)-1].domain_strategy = (ipv6_support !== '1') ? 'prefer_ipv4' : null;
  			config.outbounds[length(config.outbounds)-1].tag = 'main-out';
  		}
 
@@ -666,20 +658,21 @@ if (!isEmpty(main_node)) {
 		const main_udp_node_cfg = uci.get_all(uciconfig, main_udp_node) || {};
 		if (main_udp_node_cfg.type === 'wireguard') {
  			push(config.endpoints, generate_endpoint(main_udp_node_cfg));
-			config.endpoints[length(config.endpoints)-1].domain_strategy = (ipv6_support !== '1') ? 'prefer_ipv4' : null;
  			config.endpoints[length(config.endpoints)-1].tag = 'main-udp-out';
  		} else {
  			push(config.outbounds, generate_outbound(main_udp_node_cfg));
- 			config.outbounds[length(config.outbounds)-1].domain_strategy = (ipv6_support !== '1') ? 'prefer_ipv4' : null;
  			config.outbounds[length(config.outbounds)-1].tag = 'main-udp-out';
  		}
 	}
 } else if (!isEmpty(default_outbound)) 
 	uci.foreach(uciconfig, 'node', (cfg) => {
 			push(config.outbounds, generate_outbound(cfg));
-			config.outbounds[length(config.outbounds)-1].domain_strategy = cfg.domain_strategy;
 			config.outbounds[length(config.outbounds)-1].bind_interface = cfg.bind_interface;
 			config.outbounds[length(config.outbounds)-1].detour = cfg.outbound;
+			if (cfg.domain_resolver || cfg.domain_strategy) {
+				config.outbounds[length(config.outbounds)-1].domain_resolver = get_resolver(cfg.domain_resolver || default_outbound_dns);
+				config.outbounds[length(config.outbounds)-1].domain_strategy = cfg.domain_strategy;
+			}
 	});
 
 if (isEmpty(config.endpoints))
@@ -708,6 +701,13 @@ config.route = {
 
 /* Routing rules */
 if (!isEmpty(main_node)) {
+	/* Avoid DNS loop */
+	config.route.default_domain_resolver = {
+		action: 'route',
+		server: 'default-dns',
+		strategy: (ipv6_support !== '1') ? 'prefer_ipv4' : null
+	};
+
 	/* Direct list */
 	if (length(direct_domain_list))
 		push(config.route.rules, {
@@ -778,6 +778,10 @@ if (!isEmpty(main_node)) {
 	if (isEmpty(config.route.rule_set))
 		config.route.rule_set = null;
 } else if (!isEmpty(default_outbound)) {
+	config.route.default_domain_resolver = {
+		action: 'resolve',
+		server: get_resolver(default_outbound_dns)
+	};
 	if (domain_strategy)
  		push(config.route.rules, {
  			action: 'resolve',
