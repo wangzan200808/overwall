@@ -635,9 +635,8 @@ return view.extend({
 			delete this.vallist;
 
 			this.value('direct-out', _('Direct'));
-			uci.sections(data[0], 'routing_node', (res) => {
-				if (res.enabled === '1')
-					this.value(res.label, res.label);
+			uci.sections(data[0], 'node', (res) => {
+				this.value(res.label, res.label);
 			});
 
 			return this.super('load', section_id);
@@ -953,7 +952,7 @@ return view.extend({
 			this.value('default-dns', _('Default DNS (issued by WAN)'));
 			this.value('system-dns', _('System DNS'));
 			uci.sections(data[0], 'dns_server', (res) => {
-				if (res['.name'] !== section_id && res.enabled === '1')
+				if (res.label !== section_id && res.enabled === '1')
 					this.value(res.label, res.label);
 			});
 
