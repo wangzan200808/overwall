@@ -342,7 +342,7 @@ return view.extend({
 			this.value('system-dns', _('System DNS'));
 			uci.sections(data[0], 'dns_server', (res) => {
 				if (res.enabled === '1')
-					this.value(res['.name'], res.label);
+					this.value(res.label, res.label);
 			});
 
 			return this.super('load', section_id);
@@ -604,7 +604,7 @@ return view.extend({
 
 			uci.sections(data[0], 'ruleset', (res) => {
 				if (res.enabled === '1')
-					this.value(res['.name'], res.label);
+					this.value(res.label, res.label);
 			});
 
 			return this.super('load', section_id);
@@ -637,7 +637,7 @@ return view.extend({
 			this.value('direct-out', _('Direct'));
 			uci.sections(data[0], 'routing_node', (res) => {
 				if (res.enabled === '1')
-					this.value(res['.name'], res.label);
+					this.value(res.label, res.label);
 			});
 
 			return this.super('load', section_id);
@@ -710,7 +710,7 @@ return view.extend({
 			this.value('system-dns', _('System DNS'));
 			uci.sections(data[0], 'dns_server', (res) => {
 				if (res.enabled === '1')
-					this.value(res['.name'], res.label);
+					this.value(res.label, res.label);
 			});
 
 			return this.super('load', section_id);
@@ -1081,7 +1081,7 @@ return view.extend({
 
 			uci.sections(data[0], 'ruleset', (res) => {
 				if (res.enabled === '1')
-					this.value(res['.name'], res.label);
+					this.value(res.label, res.label);
 			});
 
 			return this.super('load', section_id);
