@@ -378,7 +378,7 @@ function get_outbound(cfg) {
  		case 'direct-out':
 			return cfg;
 		default:
-			const node = uci.get_all(uciconfig, cfg);
+			const node = uci.get(uciconfig, cfg, 'label');
 			if (isEmpty(node))
 				die(sprintf("%s's node is missing, please check your configuration.", cfg));
 			else if (node === 'urltest')
