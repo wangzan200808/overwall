@@ -31,7 +31,7 @@ const callReadDomainList = rpc.declare({
 	expect: { '': {} }
 });
 
-var callWriteDomainList = rpc.declare({
+const callWriteDomainList = rpc.declare({
 	object: 'luci.homeproxy',
 	method: 'acllist_write',
 	params: ['type', 'content'],
@@ -314,7 +314,7 @@ return view.extend({
 		so.default = so.enabled;
 		so.rmempty = false;
 
-		so = ss.option(form.ListValue, 'default_outbound', _('Default outbound');
+		so = ss.option(form.ListValue, 'default_outbound', _('Default outbound'),
 			_('Default outbound for connections not matched by any routing rules.'));
 		so.load = function(section_id) {
 			delete this.keylist;
