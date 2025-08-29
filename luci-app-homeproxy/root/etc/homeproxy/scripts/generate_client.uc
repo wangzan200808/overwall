@@ -194,7 +194,7 @@ function generate_endpoint(node) {
  
  	const endpoint = {
  		type: node.type,
- 		tag: 'cfg-' + node['.name'] + '-out',
+ 		tag: node.label
  		address: node.wireguard_local_address,
  		mtu: strToInt(node.wireguard_mtu),
  		private_key: node.wireguard_private_key,
@@ -227,7 +227,7 @@ function generate_outbound(node) {
 
 	const outbound = {
 		type: node.type,
-		tag: 'cfg-' + node.label + '-out',
+		tag: node.label
 		routing_mark: (node.type !== 'urltest' && node.type !== 'selector') ? strToInt(self_mark) : null,
 
 		server: node.address,
