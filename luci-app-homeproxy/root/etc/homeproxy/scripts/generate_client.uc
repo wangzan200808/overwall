@@ -378,13 +378,19 @@ function get_outbound(cfg) {
  		case 'direct-out':
 			return cfg;
 		default:
-			const node = uci.get(uciconfig, cfg, 'label');
-			if (isEmpty(node))
-				die(sprintf("%s's node is missing, please check your configuration.", cfg));
-			else if (node === 'urltest')
-				return cfg;
-			else
+			let node = uci.get(uciconfig, cfg, 'label');
+			if (!isEmpty(node))
 				return node;
+
+			let found = null;
+			uci.foreach(uciconfig, 'node', (s) => {
+				if (s.label === cfg)
+					found = s;
+			});
+			if (!isEmpty(found))
+				return found.label;
+
+			die(sprintf("%s's node is missing, please check your configuration.", cfg));
 		}
 	}
 }
