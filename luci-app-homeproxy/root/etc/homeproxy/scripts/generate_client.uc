@@ -194,7 +194,7 @@ function generate_endpoint(node) {
  
  	const endpoint = {
  		type: node.type,
- 		tag: node.label
+ 		tag: node.label,
  		address: node.wireguard_local_address,
  		mtu: strToInt(node.wireguard_mtu),
  		private_key: node.wireguard_private_key,
@@ -378,7 +378,7 @@ function get_outbound(cfg) {
  		case 'direct-out':
 			return cfg;
 		default:
-			const node = uci.get(uciconfig, cfg, 'label');
+			uci.get_all(uciconfig, cfg);
 			if (isEmpty(node))
 				die(sprintf("%s's node is missing, please check your configuration.", cfg));
 			else if (node === 'urltest')
