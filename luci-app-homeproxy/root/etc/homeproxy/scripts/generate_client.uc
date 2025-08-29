@@ -227,7 +227,7 @@ function generate_outbound(node) {
 
 	const outbound = {
 		type: node.type,
-		tag: node.label
+		tag: node.label,
 		routing_mark: (node.type !== 'urltest' && node.type !== 'selector') ? strToInt(self_mark) : null,
 
 		server: node.address,
