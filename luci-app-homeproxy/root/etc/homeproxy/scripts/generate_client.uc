@@ -145,6 +145,7 @@ if (match(proxy_mode), /tun/) {
 		endpoint_independent_nat = uci.get(uciconfig, uciroutingsetting, 'endpoint_independent_nat');
 	}
 }
+const log_level = uci.get(uciconfig, ucimain, 'log_level') || 'warn';
 /* UCI config end */
 
 /* Config helper start */
@@ -424,7 +425,7 @@ const config = {};
 /* Log */
 config.log = {
 	disabled: false,
-	level: 'warn',
+	level: log_level,
 	output: RUN_DIR + '/sing-box-c.log',
 	timestamp: true
 };
