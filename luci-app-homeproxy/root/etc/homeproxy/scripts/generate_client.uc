@@ -446,12 +446,12 @@ config.dns = {
 			tag: 'default-dns',
 			type: 'udp',
 			server: wan_dns,
-			detour: 'direct-out'
+			detour: self_mark ? 'direct-out' : null
 		},
 		{
 			tag: 'system-dns',
 			type: 'local',
-			detour: 'direct-out'
+			detour: self_mark ? 'direct-out' : null
 		}
 	],
 	rules: [],
@@ -496,7 +496,7 @@ if (!isEmpty(main_node)) {
 				server: 'default-dns',
 				strategy: 'prefer_ipv6'
 			},
-			detour: 'direct-out',
+			detour: self_mark ? 'direct-out' : null,
 			...parse_dnserver(china_dns_server)
 		});
 
@@ -536,6 +536,10 @@ if (!isEmpty(main_node)) {
 		if (cfg.enabled !== '1')
 			return;
 
+		let outboud = get_outbound(cfg.outbound);
+		if (outbound === 'direct-out' && isEmpty(self_mark))
+			outbound = null;
+
 		push(config.dns.servers, {
 			tag: cfg.label,
 			type: cfg.type,
@@ -551,7 +555,7 @@ if (!isEmpty(main_node)) {
 				server: get_resolver(cfg.address_resolver || dns_default_server),
 				strategy: cfg.address_strategy
 			} : null,
-			detour: get_outbound(cfg.outbound)
+			detour: outbound
 		});
 	});
 
