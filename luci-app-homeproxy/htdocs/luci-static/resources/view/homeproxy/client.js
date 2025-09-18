@@ -986,7 +986,6 @@ return view.extend({
 			delete this.keylist;
 			delete this.vallist;
 
-			this.value('', _('Default'));
 			this.value('direct-out', _('Direct'));
 			uci.sections(data[0], 'node', (res) => {
 				this.value(res.label, res.label);
