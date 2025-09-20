@@ -714,9 +714,9 @@ if (!isEmpty(main_node)) {
 			push(config.outbounds, generate_outbound(cfg));
 			config.outbounds[length(config.outbounds)-1].bind_interface = cfg.bind_interface;
 			config.outbounds[length(config.outbounds)-1].detour = cfg.outbound;
-			if (cfg.domain_resolver || cfg.domain_strategy)
+			if (cfg.domain_resolver)
 				config.endpoints[length(config.endpoints)-1].domain_resolver = {
-					server: get_resolver(cfg.domain_resolver || default_outbound_dns),
+					server: get_resolver(cfg.domain_resolver),
 					strategy: cfg.domain_strategy
 				};
 	});
