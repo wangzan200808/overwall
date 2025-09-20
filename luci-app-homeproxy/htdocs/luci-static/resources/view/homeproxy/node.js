@@ -1318,7 +1318,7 @@ return view.extend({
 					'',
 					E('button', {
 						class: 'btn cbi-button-action',
-						click: ui.createHandlerFn(this, function() {
+						click: ui.createHandlerFn(this, () => {
 							let input_links = textarea.getValue().trim().split('\n');
 							if (input_links && input_links[0]) {
 								/* Remove duplicate lines */
@@ -1355,7 +1355,7 @@ return view.extend({
 									.then(L.bind(this.map.load, this.map))
 									.then(L.bind(this.map.reset, this.map))
 									.then(L.ui.hideModal)
-									.catch(function() {});
+									.catch(() => {});
 							} else {
 								return ui.hideModal();
 							}
