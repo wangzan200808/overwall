@@ -1,44 +1,120 @@
 name: Build Custom Pinyin Dictionary
 
 on:
-  workflow_dispatch:   # 手动触发
+  workflow_dispatch:
   push:
-    branches: [ main ] # 或根据需要修改分支
+    branches: [ main ]
 
 jobs:
-  build:
+  build-dict:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
+      - name: Checkout (needed only if you want to commit back)
         uses: actions/checkout@v4
 
-      - name: Install dependencies
+      - name: Install tools (jq, curl, libime)
         run: |
           sudo apt-get update
-          sudo apt-get install -y wget tar libime-bin
+          sudo apt-get install -y jq curl wget tar libime-bin
+        # 如果 libime 在默认 apt 源不可用，你需要换成编译或自定义安装步骤
 
-      - name: Get latest release tag
-        id: get_latest
+      - name: Find latest matching release asset URL
+        id: find_asset
         run: |
-          latest_tag=$(curl -s https://api.github.com/repos/wuhgit/CustomPinyinDictionary/releases/latest | grep tag_name | cut -d '"' -f4)
-          echo "tag=$latest_tag" >> $GITHUB_OUTPUT
+          set -euo pipefail
+          REPO="wuhgit/CustomPinyinDictionary"
+          PATTERN='CustomPinyinDictionary_Fcitx_.*\.tar\.gz'
+          echo "Searching releases for asset matching: $PATTERN"
 
-      - name: Download release file
-        run: |
-          wget -q "https://github.com/wuhgit/CustomPinyinDictionary/releases/download/${{ steps.get_latest.outputs.tag }}/CustomPinyinDictionary_Fcitx_${{ steps.get_latest.outputs.tag }}.tar.gz"
+          # Request releases list and search for first matching asset's browser_download_url
+          asset_url=$(curl -s "https://api.github.com/repos/${REPO}/releases" \
+            | jq -r --arg pattern "$PATTERN" '
+                .[] 
+                | .assets[]? 
+                | select(.name | test($pattern)) 
+                | .browser_download_url' \
+            | head -n 1)
 
-      - name: Extract dictionary
+          if [ -z "$asset_url" ]; then
+            echo "No matching asset found in releases of ${REPO}."
+            exit 1
+          fi
+
+          echo "asset_url=$asset_url" >> $GITHUB_OUTPUT
+
+      - name: Download asset
+        id: download
         run: |
-          tar -xzf CustomPinyinDictionary_Fcitx_${{ steps.get_latest.outputs.tag }}.tar.gz
+          set -euo pipefail
+          url="${{ steps.find_asset.outputs.asset_url }}"
+          echo "Downloading: $url"
+          # extract filename from url
+          filename=$(basename "$url" | sed -e 's/%20/ /g')
+          wget -q --show-progress -O "$filename" "$url"
+          echo "downloaded_file=$filename" >> $GITHUB_OUTPUT
+
+      - name: List downloaded file
+        run: |
+          echo "Downloaded file: ${{ steps.download.outputs.downloaded_file }}"
           ls -lh
 
-      - name: Convert dictionary
+      - name: Extract dictionary file
+        id: extract
         run: |
-          libime_pinyindict -d CustomPinyinDictionary_Fcitx.dict CustomPinyinDictionary_Fcitx.txt
+          set -euo pipefail
+          file="${{ steps.download.outputs.downloaded_file }}"
+          # If the file variable is empty (older runners), derive it again
+          if [ -z "$file" ]; then
+            file=$(ls CustomPinyinDictionary_Fcitx_*.tar.gz 2>/dev/null || true)
+            if [ -z "$file" ]; then
+              echo "No tar.gz found to extract."
+              exit 1
+            fi
+          fi
+          echo "Extracting $file"
+          tar -xzf "$file"
+          # find the .dict file
+          dictfile=$(ls CustomPinyinDictionary_Fcitx*.dict 2>/dev/null | head -n1 || true)
+          if [ -z "$dictfile" ]; then
+            echo "Failed to find CustomPinyinDictionary_Fcitx.dict after extraction."
+            echo "Files in working dir:"
+            ls -la
+            exit 1
+          fi
+          echo "dictfile=$dictfile" >> $GITHUB_OUTPUT
 
-      - name: Upload converted file
+      - name: Convert dict with libime_pinyindict
+        id: convert
+        run: |
+          set -euo pipefail
+          dict="${{ steps.extract.outputs.dictfile }}"
+          out="CustomPinyinDictionary_Fcitx.txt"
+          echo "Converting $dict -> $out"
+          # ensure tool exists
+          if ! command -v libime_pinyindict >/dev/null 2>&1; then
+            echo "libime_pinyindict not found in PATH"
+            exit 1
+          fi
+          libime_pinyindict -d "$dict" "$out"
+          if [ ! -f "$out" ]; then
+            echo "Conversion failed: $out not produced"
+            ls -la
+            exit 1
+          fi
+          echo "converted_file=$out" >> $GITHUB_OUTPUT
+
+      - name: Upload converted dictionary artifact
         uses: actions/upload-artifact@v4
         with:
-          name: converted-dict
+          name: converted-dictionary
           path: CustomPinyinDictionary_Fcitx.txt
+
+      # 可选：将生成的文件自动提交回仓库（谨慎：会触发 workflow 循环）
+      #- name: Commit & push converted file (optional)
+      #  if: github.ref == 'refs/heads/main'
+      #  run: |
+      #    git config user.name "github-actions[bot]"
+      #    git config user.email "github-actions[bot]@users.noreply.github.com"
+      #    git add CustomPinyinDictionary_Fcitx.txt
+      #    git commit -m "chore: update converted CustomPinyinDictionary"
+      #    git push
