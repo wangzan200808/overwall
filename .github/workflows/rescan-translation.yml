@@ -1,41 +1,44 @@
-name: Rescan translation
+name: Build Custom Pinyin Dictionary
 
 on:
+  workflow_dispatch:   # 手动触发
   push:
-    branches:
-      - 'master'
-    paths:
-      - 'htdocs/**'
-      - 'root/**'
+    branches: [ main ] # 或根据需要修改分支
 
 jobs:
-  scan:
+  build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
 
     steps:
-      - name: Checkout source tree
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Rescan translation
-        env:
-          DEBIAN_FRONTEND: noninteractive
+      - name: Install dependencies
         run: |
-          sudo -E apt-get -y install gettext
-          curl -LO "https://github.com/openwrt/luci/raw/master/build/i18n-scan.pl"
-          curl -LO "https://github.com/openwrt/luci/raw/master/build/i18n-update.pl"
-          perl "i18n-scan.pl" . > "po/templates/homeproxy.pot"
-          perl "i18n-update.pl" "po"
-          find po/ -name '*.po~' -exec rm -f {} \;
-          rm -f "i18n-scan.pl" "i18n-update.pl"
-          [ -z "$(git status -s)" ] || echo -e "CHANGE_STAT=1" >> "$GITHUB_ENV"
+          sudo apt-get update
+          sudo apt-get install -y wget tar libime-bin
 
-      - name: Commit changes
-        if: ${{ env.CHANGE_STAT }}
+      - name: Get latest release tag
+        id: get_latest
         run: |
-          git config --local user.name "github-actions[bot]"
-          git config --local user.email "<41898282+github-actions[bot]@users.noreply.github.com>"
-          git add .
-          git commit -m "chore(po): rescan translation"
-          git push -f origin HEAD:po
+          latest_tag=$(curl -s https://api.github.com/repos/wuhgit/CustomPinyinDictionary/releases/latest | grep tag_name | cut -d '"' -f4)
+          echo "tag=$latest_tag" >> $GITHUB_OUTPUT
+
+      - name: Download release file
+        run: |
+          wget -q "https://github.com/wuhgit/CustomPinyinDictionary/releases/download/${{ steps.get_latest.outputs.tag }}/CustomPinyinDictionary_Fcitx_${{ steps.get_latest.outputs.tag }}.tar.gz"
+
+      - name: Extract dictionary
+        run: |
+          tar -xzf CustomPinyinDictionary_Fcitx_${{ steps.get_latest.outputs.tag }}.tar.gz
+          ls -lh
+
+      - name: Convert dictionary
+        run: |
+          libime_pinyindict -d CustomPinyinDictionary_Fcitx.dict CustomPinyinDictionary_Fcitx.txt
+
+      - name: Upload converted file
+        uses: actions/upload-artifact@v4
+        with:
+          name: converted-dict
+          path: CustomPinyinDictionary_Fcitx.txt
