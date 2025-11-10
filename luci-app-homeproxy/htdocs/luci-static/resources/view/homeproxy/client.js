@@ -909,7 +909,7 @@ return view.extend({
 		so.value('tcp', _('TCP'));
 		so.value('tls', _('TLS'));
 		so.value('https', _('HTTPS'));
-		so.value('http3', _('HTTP3'));
+		so.value('h3', _('HTTP/3'));
 		so.value('quic', _('QUIC'));
 		so.default = 'udp';
 		so.rmempty = false;
@@ -919,6 +919,7 @@ return view.extend({
 		so.rmempty = false;
 		so = ss.option(form.Value, 'server_port', _('Port'),
 			_('The port of the DNS server.'));
+		so.placeholder = 'auto';
 		so.datatype = 'port';
 
 		so = ss.option(form.Value, 'path', _('Path'),
