@@ -11,7 +11,7 @@ import { writefile } from 'fs';
 import { cursor } from 'uci';
 
 import {
-	isEmpty, strToBool, strToInt,
+	isEmpty, strToBool, strToInt, strToTime,
 	removeBlankAttrs, HP_DIR, RUN_DIR
 } from 'homeproxy';
 
