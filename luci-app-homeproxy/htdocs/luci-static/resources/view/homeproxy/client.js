@@ -826,7 +826,6 @@ return view.extend({
 		so.value('rule', 'Rule');
 		so.value('global', 'Global');
 		so.value('script', 'Script');
-		so.modalonly = true;
 		/* Routing rules end */
 
 		/* DNS settings start */
@@ -1096,7 +1095,6 @@ return view.extend({
 		so.value('rule', 'Rule');
 		so.value('global', 'Global');
 		so.value('script', 'Script');
-		so.modalonly = true;
 
 		so = ss.taboption('field_other', form.Flag, 'rule_set_ip_cidr_match_source', _('Rule set IP CIDR as source IP'),
 			_('Make IP CIDR in rule sets match the source IP.'));
