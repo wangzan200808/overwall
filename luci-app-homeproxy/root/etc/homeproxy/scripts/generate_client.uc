@@ -827,8 +827,14 @@ if (!isEmpty(main_node)) {
 		config.route.rule_set = null;
 } else if (!isEmpty(default_outbound)) {
 	config.route.default_domain_resolver = {
+		action: 'resolve',
 		server: get_resolver(default_outbound_dns)
 	};
+	if (domain_strategy)
+ 		push(config.route.rules, {
+ 			action: 'resolve',
+ 			strategy: domain_strategy
+ 		});
 
 	uci.foreach(uciconfig, uciroutingrule, (cfg) => {
 		if (cfg.enabled !== '1')
