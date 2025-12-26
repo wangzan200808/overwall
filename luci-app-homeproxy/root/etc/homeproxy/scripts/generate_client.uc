@@ -872,7 +872,7 @@ if (!isEmpty(main_node)) {
 		});
 	});
 
-	config.route.final = default_outbound;
+	config.route.final = cfg.outbound;
 
 	/* Rule set */
 	uci.foreach(uciconfig, uciruleset, (cfg) => {
