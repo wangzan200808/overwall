@@ -466,6 +466,7 @@ config.dns = {
 if (!isEmpty(main_node)) {
 	/* Main DNS */
 	push(config.dns.servers, {
+        tag: 'main-dns',
 		domain_resolver: {
 			server: 'default-dns',
 			strategy: (ipv6_support !== '1') ? 'ipv4_only' : null
